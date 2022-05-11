@@ -12,23 +12,26 @@ namespace Discord.Bot.IsmsBot
     public class DiscordProxy
     {
         DiscordSocketClient _disClient;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public DiscordProxy() 
         {
             _disClient = new DiscordSocketClient();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task RunDiscordApp() 
         {
             _disClient.Log += DiscordLogAsync;
+            _disClient.MessageReceived += ClientOnMessageReceived;
 
-            Console.WriteLine("Please enter Discord token key");
-            var token = Environment.GetEnvironmentVariable(Console.ReadLine(), EnvironmentVariableTarget.Machine);
 
-            if (string.IsNullOrWhiteSpace(token)) 
-            {
-                throw new Exception("Path did not return a token.");
-            }
+            string token = GetToken();
 
             await _disClient.LoginAsync(TokenType.Bot, token);
             await _disClient.StartAsync();
@@ -36,6 +39,11 @@ namespace Discord.Bot.IsmsBot
             await Task.Delay(-1);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public static async Task DiscordLogAsync(LogMessage message) 
         {
             var severity = message.Severity switch
@@ -50,6 +58,41 @@ namespace Discord.Bot.IsmsBot
             };
             Log.Write(severity, message.Exception, "[{Source}] {Message}", message.Source, message.Message);
             await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private string GetToken() 
+        {
+            Console.WriteLine("Please enter Discord token key");
+            var token = Environment.GetEnvironmentVariable(Console.ReadLine(), EnvironmentVariableTarget.Machine);
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new Exception("Path did not return a token.");
+            }
+
+            return token;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        private static Task ClientOnMessageReceived(SocketMessage arg) 
+        {
+            Log.Debug(arg.Content);
+            string response = $"User '{arg.Author.Username}' successfully ran hellowrold!";
+            if (arg.Content.StartsWith("!helloworld")) 
+            {
+                arg.Channel.SendMessageAsync(response);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }
