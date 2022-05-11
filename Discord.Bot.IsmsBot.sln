@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord.Bot.IsmsBot", "Discord.Bot.IsmsBot.csproj", "{F8C00B8B-2EA8-48C5-B33F-66F76B6FBDD3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F8C00B8B-2EA8-48C5-B33F-66F76B6FBDD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8C00B8B-2EA8-48C5-B33F-66F76B6FBDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8C00B8B-2EA8-48C5-B33F-66F76B6FBDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8C00B8B-2EA8-48C5-B33F-66F76B6FBDD3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40355DC6-C76D-41A2-8847-413821DE1F6E}
+	EndGlobalSection
+EndGlobal
