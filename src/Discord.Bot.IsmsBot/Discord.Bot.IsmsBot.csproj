@@ -19,4 +19,10 @@
     <ProjectReference Include="..\Discord.Bot.Database\Discord.Bot.Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
