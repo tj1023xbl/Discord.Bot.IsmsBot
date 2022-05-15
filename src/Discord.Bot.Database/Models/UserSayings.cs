@@ -14,8 +14,15 @@ namespace Discord.Bot.Database
         /// </summary>
         [Key]
         public string UserIsm { get; set; }
+        
+        /// <summary>
+        /// The list of sayings for this user.
+        /// </summary>
         public List<string> Sayings { get; set; }
 
-        public string Test { get; set; }
+        /// <summary>
+        /// The discord server this saying belongs to.
+        /// </summary>
+        public DiscordServer Server { get; set; }
     }
 }

@@ -6,18 +6,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using Serilog.Events;
+using Microsoft.Extensions.Configuration;
 
 namespace Discord.Bot.IsmsBot
 {
-    public class DiscordProxy
+    public class DiscordProxy : IDiscordProxy
     {
         DiscordSocketClient _disClient;
+        IConfiguration _configuration;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public DiscordProxy() 
+        public DiscordProxy(IConfiguration conifg) 
         {
+            _configuration = conifg;
+            
             _disClient = new DiscordSocketClient();
         }
 
@@ -30,10 +34,7 @@ namespace Discord.Bot.IsmsBot
             _disClient.Log += DiscordLogAsync;
             _disClient.MessageReceived += ClientOnMessageReceived;
 
-
-            string token = GetToken();
-
-            await _disClient.LoginAsync(TokenType.Bot, token);
+            await _disClient.LoginAsync(TokenType.Bot, GetToken());
             await _disClient.StartAsync();
 
             await Task.Delay(-1);
@@ -67,8 +68,14 @@ namespace Discord.Bot.IsmsBot
         /// <exception cref="Exception"></exception>
         private string GetToken() 
         {
-            Console.WriteLine("Please enter Discord token key");
-            var token = Environment.GetEnvironmentVariable(Console.ReadLine(), EnvironmentVariableTarget.Machine);
+            string tokenVar = _configuration.GetSection("Token").Value;
+            if (string.IsNullOrWhiteSpace(tokenVar)) 
+            {
+                Console.WriteLine("Please enter Discord token key");
+                tokenVar = Console.ReadLine();
+            }
+            
+            var token = Environment.GetEnvironmentVariable(tokenVar, EnvironmentVariableTarget.Machine);
 
             if (string.IsNullOrWhiteSpace(token))
             {

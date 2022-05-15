@@ -9,11 +9,11 @@ using Discord.Bot.Database;
 
 namespace Discord.Bot.IsmsBot
 {
-    class Startup
+    class Program
     {
         private readonly IConfiguration _config;  
 
-        public Startup() 
+        public Program() 
         {
             // Create the configuration
             var builder = new ConfigurationBuilder()
@@ -24,7 +24,7 @@ namespace Discord.Bot.IsmsBot
             _config = builder.Build();
         }
 
-        public static Task Main(string[] args) => new Startup().MainAsync();
+        public static Task Main(string[] args) => new Program().MainAsync();
 
         /// <summary>
         /// Main Method
@@ -35,11 +35,11 @@ namespace Discord.Bot.IsmsBot
             using (var services = ConfigureServices())
             {
                 SetupLogging();
-                DiscordProxy discordProxy = new DiscordProxy();
+                var a = services.GetService<IDiscordProxy>();
 
                 try
                 {
-                    await discordProxy.RunDiscordApp();
+                    await a.RunDiscordApp();
                 }
                 catch (Exception e)
                 {
@@ -54,6 +54,7 @@ namespace Discord.Bot.IsmsBot
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandler>()
+                .AddSingleton<IDiscordProxy, DiscordProxy>()
                 .AddDbContext<UserSayingsContext>();
 
             var serviceProvider = services.BuildServiceProvider();
