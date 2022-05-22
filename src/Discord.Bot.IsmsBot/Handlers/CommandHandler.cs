@@ -13,16 +13,18 @@ namespace Discord.Bot.IsmsBot
     {
         private readonly DiscordSocketClient _discClient;
         private readonly CommandService _commands;
+        private readonly IServiceProvider _servicecs;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="client"></param>
         /// <param name="commands"></param>
-        public CommandHandler(DiscordSocketClient client, CommandService commands) 
+        public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services) 
         {
             _discClient = client;
             _commands = commands;
+            _servicecs = services;
         }
 
         public async Task InstallCommandsAsync() 
@@ -30,7 +32,7 @@ namespace Discord.Bot.IsmsBot
             _discClient.MessageReceived += HandleCommandAsync;
 
             await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                        services: null);
+                                        services: _servicecs);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -56,7 +58,7 @@ namespace Discord.Bot.IsmsBot
             await _commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
-                services: null);
+                services: _servicecs);
         }
     }
 }

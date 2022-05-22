@@ -14,15 +14,16 @@ namespace Discord.Bot.IsmsBot
     {
         DiscordSocketClient _disClient;
         IConfiguration _configuration;
+        CommandHandler _handler;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public DiscordProxy(IConfiguration conifg) 
+        public DiscordProxy(IConfiguration conifg, DiscordSocketClient client, CommandHandler handler) 
         {
             _configuration = conifg;
-            
-            _disClient = new DiscordSocketClient();
+            _disClient = client;
+            _handler = handler; 
         }
 
         /// <summary>
@@ -36,6 +37,8 @@ namespace Discord.Bot.IsmsBot
 
             await _disClient.LoginAsync(TokenType.Bot, GetToken());
             await _disClient.StartAsync();
+
+            await _handler.InstallCommandsAsync();
 
             await Task.Delay(-1);
         }
