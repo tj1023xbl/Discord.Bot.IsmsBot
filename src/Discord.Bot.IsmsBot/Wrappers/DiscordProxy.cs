@@ -33,7 +33,7 @@ namespace Discord.Bot.IsmsBot
         public async Task RunDiscordApp() 
         {
             _disClient.Log += DiscordLogAsync;
-            _disClient.MessageReceived += ClientOnMessageReceived;
+            //_disClient.MessageReceived += ClientOnMessageReceived;
 
             await _disClient.LoginAsync(TokenType.Bot, GetToken());
             await _disClient.StartAsync();

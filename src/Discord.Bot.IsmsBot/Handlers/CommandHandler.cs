@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,21 @@ namespace Discord.Bot.IsmsBot
         {
             _discClient.MessageReceived += HandleCommandAsync;
 
-            await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                        services: _servicecs);
+            await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _servicecs);
+
+            _commands.CommandExecuted += async (optional, context, result) =>
+            {
+                if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
+                {
+                    // the command failed, let's notify the user that something happened.
+                    await context.Channel.SendMessageAsync($"error: {result}");
+                }
+            };
+
+            foreach (var module in _commands.Modules)
+            {
+                Log.Debug($"CommandHandler Module '{module.Name}' initialized.");
+            }
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)

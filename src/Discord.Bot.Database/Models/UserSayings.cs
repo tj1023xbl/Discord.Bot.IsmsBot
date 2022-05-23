@@ -13,12 +13,17 @@ namespace Discord.Bot.Database
         /// The name of the user containing these isms.
         /// </summary>
         [Key]
-        public string UserIsm { get; set; }
+        public string IsmKey { get; set; }
         
         /// <summary>
         /// The list of sayings for this user.
         /// </summary>
         public List<string> Sayings { get; set; }
+
+        /// <summary>
+        /// The ID of the parent server object.
+        /// </summary>
+        public ulong GuildId { get; set; }
 
         /// <summary>
         /// The discord server this saying belongs to.

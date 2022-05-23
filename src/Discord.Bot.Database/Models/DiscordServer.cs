@@ -10,11 +10,9 @@ namespace Discord.Bot.Database
     public partial class DiscordServer
     {
         [Key]
-        public Guid Id { get; set; }
+        public ulong Id { get; set; }
 
         public string ServerName { get; set; }
-
-        public string GuildId { get; set; }
 
         public List<UserSayings> UserSayings { get; set; }
     }
