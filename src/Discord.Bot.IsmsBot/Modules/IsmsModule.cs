@@ -28,7 +28,7 @@ namespace Discord.Bot.IsmsBot
 		  var sayings = await _ismsService.AddIsmAsync(ismText, Context);
 		  if (sayings != null)
 		  {
-			 await Context.Channel.SendMessageAsync($"Successfully added new {sayings.IsmKey}");
+			 await Context.Channel.SendMessageAsync($"Successfully added new saying for {sayings.Username}");
 		  }
 		  else 
 		  {
@@ -36,13 +36,5 @@ namespace Discord.Bot.IsmsBot
 		  }
 	   }
 
-	   // ~sample square 20 -> 400
-	   [Command("square")]
-	   [Summary("Squares a number.")]
-	   public async Task SquareAsync( [Summary("The number to square.")] int num)
-	   {
-		  // We can also access the channel from the Command Context.
-		  await Context.Channel.SendMessageAsync($"{num}^2 = {Math.Pow(num, 2)}");
-	   }
     }
 }

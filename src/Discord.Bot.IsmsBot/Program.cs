@@ -35,11 +35,11 @@ namespace Discord.Bot.IsmsBot
             using (var services = ConfigureServices())
             {
                 SetupLogging();
-                var a = services.GetService<IDiscordProxy>();
+                var discordProxy = services.GetService<IDiscordProxy>();
 
                 try
                 {
-                    await a.RunDiscordApp();
+                    await discordProxy.RunDiscordApp();
                 }
                 catch (Exception e)
                 {
@@ -70,7 +70,9 @@ namespace Discord.Bot.IsmsBot
             Log.Logger = Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
             .Enrich.FromLogContext()
-            .WriteTo.Console().WriteTo.File("C:\\logging\\discordBot\\logs.log").CreateLogger();
+            .WriteTo.Console()
+            .WriteTo.File("C:\\logging\\discordBot\\logs.log")
+            .CreateLogger();
         }
     }
 }

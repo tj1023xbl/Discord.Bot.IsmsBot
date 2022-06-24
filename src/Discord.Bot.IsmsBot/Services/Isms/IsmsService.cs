@@ -38,14 +38,14 @@ namespace Discord.Bot.IsmsBot
                     return null;
                 }
 
-                userSayingsContext = _dbContext.UserSayings.AsQueryable().Where(u => u.IsmKey == key).FirstOrDefault();
+                userSayingsContext = _dbContext.UserSayings.AsQueryable().Where(u => u.Username == key).FirstOrDefault();
 
                 if (userSayingsContext == null)
                 {
                     userSayingsContext = new UserSayings()
                     {
                         GuildId = context.Guild.Id,
-                        IsmKey = key,
+                        Username = key,
                         Sayings = new List<string>() { ism }
                     };
 

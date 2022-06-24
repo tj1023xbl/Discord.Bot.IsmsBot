@@ -13,7 +13,7 @@ namespace Discord.Bot.Database
         /// The name of the user containing these isms.
         /// </summary>
         [Key]
-        public string IsmKey { get; set; }
+        public string Username { get; set; }
         
         /// <summary>
         /// The list of sayings for this user.
