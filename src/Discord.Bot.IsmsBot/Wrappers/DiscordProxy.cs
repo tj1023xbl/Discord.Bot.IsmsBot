@@ -1,8 +1,6 @@
 ﻿using Discord.WebSocket;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using IsmsBot.Command;
 using System.Threading.Tasks;
 using Serilog;
 using Serilog.Events;
@@ -15,15 +13,17 @@ namespace Discord.Bot.IsmsBot
         DiscordSocketClient _disClient;
         IConfiguration _configuration;
         CommandHandler _handler;
+        RegexCommandHandler _regexCommandHandler;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public DiscordProxy(IConfiguration conifg, DiscordSocketClient client, CommandHandler handler) 
+        public DiscordProxy(IConfiguration conifg, DiscordSocketClient client, CommandHandler handler, RegexCommandHandler regexCommandHandler) 
         {
             _configuration = conifg;
             _disClient = client;
-            _handler = handler; 
+            _handler = handler;
+            _regexCommandHandler = regexCommandHandler;
         }
 
         /// <summary>
@@ -42,6 +42,7 @@ namespace Discord.Bot.IsmsBot
             await _disClient.LoginAsync(TokenType.Bot, GetToken());
             await _disClient.StartAsync();
             await _handler.InstallCommandsAsync();
+            await _regexCommandHandler.InitializeCommandsAsync();
 
             // Idle until any key is pressed. Then gracefully close the app.
             await Task.Factory.StartNew(() => Console.ReadLine());
@@ -92,21 +93,5 @@ namespace Discord.Bot.IsmsBot
             return token;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="arg"></param>
-        /// <returns></returns>
-        private static Task ClientOnMessageReceived(SocketMessage arg) 
-        {
-            Log.Debug(arg.Content);
-            string response = $"User '{arg.Author.Username}' successfully ran hellowrold!";
-            if (arg.Content.StartsWith("!helloworld")) 
-            {
-                arg.Channel.SendMessageAsync(response);
-            }
-
-            return Task.CompletedTask;
-        }
     }
 }

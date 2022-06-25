@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Discord.WebSocket;
 using Discord.Commands;
+using IsmsBot.Command;
 using Discord.Bot.Database;
 
 namespace Discord.Bot.IsmsBot
@@ -51,6 +52,11 @@ namespace Discord.Bot.IsmsBot
         private ServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection().AddSingleton(_config)
+
+                // Add regex command services
+                .AddScoped<RegexCommandHandler>()
+                .AddScoped<CommandOptions>()
+                .AddScoped<IRegexCommandModuleProvider, RegexCommandModuleProvider>()
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandler>()

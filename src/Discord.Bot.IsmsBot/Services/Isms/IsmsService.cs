@@ -90,13 +90,14 @@ namespace Discord.Bot.IsmsBot
                 .Users
                 .FindAsync(ismKey);
 
-            await _dbContext.Entry(user).Collection(u => u.Sayings).LoadAsync();
-
             if(user == null)
             {
                 Log.Information("{0} is not recognized as a user", ismKey);
                 return null;
             }
+
+            // load the sayings for this user
+            await _dbContext.Entry(user).Collection(u => u.Sayings).LoadAsync();
 
             if(user.Sayings == null || !user.Sayings.Any())
             {
