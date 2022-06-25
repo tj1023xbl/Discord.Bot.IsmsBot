@@ -52,6 +52,7 @@ namespace Discord.Bot.IsmsBot
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
         {
+            Log.Verbose("Message received: `{0}`", messageParam);
             // Don't process the command if it was a system message
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
@@ -65,8 +66,12 @@ namespace Discord.Bot.IsmsBot
                 message.Author.IsBot)
                 return;
 
+            Log.Verbose("Creating message context");
+
             // Create a WebSocket-based command context based on the message
             var context = new SocketCommandContext(_discordClient, message);
+
+            Log.Verbose("Context created successfully: {0}", context);
 
             // Execute the command with the command context we just
             // created, along with the service provider for precondition checks.

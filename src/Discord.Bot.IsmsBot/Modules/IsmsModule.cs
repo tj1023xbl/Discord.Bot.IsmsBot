@@ -10,7 +10,6 @@ using Serilog;
 
 namespace Discord.Bot.IsmsBot
 {
-    [Group("isms")]
     public class IsmsModule : ModuleBase<SocketCommandContext>
     {
 	   private readonly IIsmsService _ismsService;
@@ -30,7 +29,7 @@ namespace Discord.Bot.IsmsBot
 		  var user = await _ismsService.AddIsmAsync(ismText, Context);
 		  if (user != null)
 		  {
-			 await Context.Channel.SendMessageAsync($"Successfully added new saying for {user.Username}");
+			 await Context.Channel.SendMessageAsync($"Successfully added new saying for {user.IsmKey}");
 		  }
 		  else 
 		  {
@@ -46,9 +45,10 @@ namespace Discord.Bot.IsmsBot
 			Saying ism = await _ismsService.GetIsmAsync(username, Context);
             if (ism == null)
             {
-				string msg = $"{username} is not recognized, or does not have any isms yet.";
+				string msg = $"{username} is not recognized, or they don't have any isms yet.";
 				Log.Information(msg);
 				await Context.Message.ReplyAsync(msg);
+				return;
 			}
 
 			await Context.Message.ReplyAsync($"_{ism.IsmSaying}_");

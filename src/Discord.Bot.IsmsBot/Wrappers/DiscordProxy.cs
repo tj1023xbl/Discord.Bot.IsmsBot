@@ -33,14 +33,18 @@ namespace Discord.Bot.IsmsBot
         public async Task RunDiscordApp() 
         {
             _disClient.Log += DiscordLogAsync;
-            //_disClient.MessageReceived += ClientOnMessageReceived;
+
+            _disClient.LoggedIn += () => {
+                Log.Information("Discord bot logged in as {0}", _disClient.CurrentUser);
+                return Task.CompletedTask;
+            };
 
             await _disClient.LoginAsync(TokenType.Bot, GetToken());
             await _disClient.StartAsync();
-
             await _handler.InstallCommandsAsync();
 
-            await Task.Delay(-1);
+            // Idle until any key is pressed. Then gracefully close the app.
+            await Task.Factory.StartNew(() => Console.ReadLine());
         }
 
         /// <summary>
@@ -71,10 +75,10 @@ namespace Discord.Bot.IsmsBot
         /// <exception cref="Exception"></exception>
         private string GetToken() 
         {
-            string tokenVar = _configuration.GetSection("Token").Value;
+            string tokenVar = _configuration.GetSection("TokenVar").Value;
             if (string.IsNullOrWhiteSpace(tokenVar)) 
             {
-                Console.WriteLine("Please enter Discord token key");
+                Console.WriteLine("Please enter the environment variable key to retrieve the Discord token key");
                 tokenVar = Console.ReadLine();
             }
             
@@ -82,7 +86,7 @@ namespace Discord.Bot.IsmsBot
 
             if (string.IsNullOrWhiteSpace(token))
             {
-                throw new Exception("Path did not return a token.");
+                throw new Exception("Environment variable was invalid or did not result in a valid discord token");
             }
 
             return token;

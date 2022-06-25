@@ -9,18 +9,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Discord.Bot.Database
 {
-    [Index(nameof(GuildId), nameof(Username), IsUnique = true)]
+    [Index(nameof(GuildId), nameof(IsmKey), IsUnique = true)]
     public partial class User
     {
         /// <summary>
         /// The name of the user containing these isms.
         /// </summary>
         [Key]
-        public string Username { get; set; }
+        public string IsmKey { get; set; }
         
         /// <summary>
         /// The list of sayings for this user.
         /// </summary>
+        [Required]
         public ICollection<Saying> Sayings { get; set; }
 
         /// <summary>

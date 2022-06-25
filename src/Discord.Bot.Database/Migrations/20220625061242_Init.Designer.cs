@@ -3,6 +3,7 @@ using System;
 using Discord.Bot.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Discord.Bot.Database.Migrations
 {
     [DbContext(typeof(UserSayingsContext))]
-    partial class UserSayingsContextModelSnapshot : ModelSnapshot
+    [Migration("20220625061242_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
@@ -33,7 +35,7 @@ namespace Discord.Bot.Database.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserIsmKey")
+                    b.Property<string>("Username")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -41,22 +43,22 @@ namespace Discord.Bot.Database.Migrations
                     b.HasIndex("IsmSaying")
                         .IsUnique();
 
-                    b.HasIndex("UserIsmKey");
+                    b.HasIndex("Username");
 
                     b.ToTable("Sayings");
                 });
 
             modelBuilder.Entity("Discord.Bot.Database.User", b =>
                 {
-                    b.Property<string>("IsmKey")
+                    b.Property<string>("Username")
                         .HasColumnType("TEXT");
 
                     b.Property<ulong>("GuildId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("IsmKey");
+                    b.HasKey("Username");
 
-                    b.HasIndex("GuildId", "IsmKey")
+                    b.HasIndex("GuildId", "Username")
                         .IsUnique();
 
                     b.ToTable("Users");
@@ -66,7 +68,7 @@ namespace Discord.Bot.Database.Migrations
                 {
                     b.HasOne("Discord.Bot.Database.User", null)
                         .WithMany("Sayings")
-                        .HasForeignKey("UserIsmKey");
+                        .HasForeignKey("Username");
                 });
 
             modelBuilder.Entity("Discord.Bot.Database.User", b =>

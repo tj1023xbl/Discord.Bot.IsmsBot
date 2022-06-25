@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Discord.Bot.Database.Migrations
 {
     [DbContext(typeof(UserSayingsContext))]
-    [Migration("20220625040102_Init")]
-    partial class Init
+    [Migration("20220625063036_renamed_username")]
+    partial class renamed_username
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -35,7 +35,7 @@ namespace Discord.Bot.Database.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserIsmKey")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -43,22 +43,22 @@ namespace Discord.Bot.Database.Migrations
                     b.HasIndex("IsmSaying")
                         .IsUnique();
 
-                    b.HasIndex("Username");
+                    b.HasIndex("UserIsmKey");
 
                     b.ToTable("Sayings");
                 });
 
             modelBuilder.Entity("Discord.Bot.Database.User", b =>
                 {
-                    b.Property<string>("Username")
+                    b.Property<string>("IsmKey")
                         .HasColumnType("TEXT");
 
                     b.Property<ulong>("GuildId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Username");
+                    b.HasKey("IsmKey");
 
-                    b.HasIndex("GuildId", "Username")
+                    b.HasIndex("GuildId", "IsmKey")
                         .IsUnique();
 
                     b.ToTable("Users");
@@ -68,7 +68,7 @@ namespace Discord.Bot.Database.Migrations
                 {
                     b.HasOne("Discord.Bot.Database.User", null)
                         .WithMany("Sayings")
-                        .HasForeignKey("Username");
+                        .HasForeignKey("UserIsmKey");
                 });
 
             modelBuilder.Entity("Discord.Bot.Database.User", b =>

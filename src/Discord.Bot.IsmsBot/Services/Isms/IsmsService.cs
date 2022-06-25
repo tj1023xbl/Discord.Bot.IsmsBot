@@ -5,9 +5,9 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -26,6 +26,7 @@ namespace Discord.Bot.IsmsBot
 
         public async Task<User> AddIsmAsync(string commandString, SocketCommandContext discordContext)
         {
+            Log.Verbose("Adding saying for `{0}`", commandString);
             User userContext = null;
             if (!string.IsNullOrWhiteSpace(commandString)) 
             {
@@ -37,17 +38,23 @@ namespace Discord.Bot.IsmsBot
                     return null;
                 }
 
-                string username = match.Groups["ismKey"].Value;
+                string ismKey = match.Groups["ismKey"].Value;
                 string ism = match.Groups["ism"].Value;
-
-                userContext = await _dbContext.Users.FindAsync(username);
+                try
+                {
+                    userContext = await _dbContext.Users.FindAsync(ismKey);
+                } catch (Exception ex)
+                {
+                    Log.Error("Error getting user {0}", ex);
+                    throw;
+                }
 
                 if (userContext == null)
                 {
                     userContext = new User()
                     {
                         GuildId = discordContext.Guild.Id,
-                        Username = username,
+                        IsmKey = ismKey,
                         Sayings = new List<Saying>() { 
                             new Saying()
                             {
@@ -77,29 +84,34 @@ namespace Discord.Bot.IsmsBot
             return userContext;
         }
 
-        public async Task<Saying> GetIsmAsync(string username, SocketCommandContext discordContext)
+        public async Task<Saying> GetIsmAsync(string ismKey, SocketCommandContext discordContext)
         {
-            User user = await _dbContext.Users.FindAsync(username);
+            User user = await _dbContext
+                .Users
+                .FindAsync(ismKey);
+
+            await _dbContext.Entry(user).Collection(u => u.Sayings).LoadAsync();
+
             if(user == null)
             {
-                Log.Information("{0} is not recognized as a user", username);
+                Log.Information("{0} is not recognized as a user", ismKey);
+                return null;
+            }
+
+            if(user.Sayings == null || !user.Sayings.Any())
+            {
+                Log.Information("{0} does not have any isms yet.", ismKey);
                 return null;
             }
 
             // Get random saying
             var rand = new Random();
             int toSkip = 0;
-            int count = user.Sayings.Count;
-            if (count > 0) {
-                toSkip = rand.Next(1, count);
+            int count = user.Sayings != null ? user.Sayings.Count : 0;
+            if (count > 1) {
+                toSkip = rand.Next(0, count);
             }
             Saying saying = user.Sayings.Skip(toSkip).FirstOrDefault();
-
-            if(saying == null)
-            {
-                Log.Information("{0} does not have any isms yet.", username);
-                return null;
-            }
 
             return saying;
         }
