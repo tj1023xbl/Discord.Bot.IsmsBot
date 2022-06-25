@@ -5,14 +5,14 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using IsmsBot.Command;
+using IsmsBot.RegexCommand;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Serilog;
 
-namespace IsmsBot.Command
+namespace IsmsBot.RegexCommand
 {
     public class RegexCommandHandler : IDisposable
     {

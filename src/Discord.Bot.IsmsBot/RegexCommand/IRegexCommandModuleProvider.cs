@@ -1,4 +1,4 @@
-﻿namespace IsmsBot.Command
+﻿namespace IsmsBot.RegexCommand
 {
     public interface IRegexCommandModuleProvider
     {

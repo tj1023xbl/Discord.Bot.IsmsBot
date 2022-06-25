@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IsmsBot.Command
+namespace IsmsBot.RegexCommand
 {
     /// <summary>Tells regex command to not recreate class on every invokation, and use cached instance instead.</summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IsmsBot.Command
+namespace IsmsBot.RegexCommand
 {
     public class CommandOptions
     {

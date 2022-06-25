@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace IsmsBot.Command
+namespace IsmsBot.RegexCommand
 {
     public class RegexCommandModuleProvider : IRegexCommandModuleProvider
     {

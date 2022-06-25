@@ -1,6 +1,6 @@
 ﻿using Discord.WebSocket;
 using System;
-using IsmsBot.Command;
+using IsmsBot.RegexCommand;
 using System.Threading.Tasks;
 using Serilog;
 using Serilog.Events;

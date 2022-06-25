@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Discord.WebSocket;
 using Discord.Commands;
-using IsmsBot.Command;
+using IsmsBot.RegexCommand;
 using Discord.Bot.Database;
 
 namespace Discord.Bot.IsmsBot

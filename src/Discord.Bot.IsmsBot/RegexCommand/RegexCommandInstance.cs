@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using IsmsBot.Command;
+using IsmsBot.RegexCommand;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -12,7 +12,7 @@ using Serilog;
 using ParameterInfo = System.Reflection.ParameterInfo;
 using Discord.Bot.IsmsBot;
 
-namespace IsmsBot.Command
+namespace IsmsBot.RegexCommand
 {
     public class RegexCommandInstance
     {

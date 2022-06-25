@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Bot.Database.Models;
-using IsmsBot.Command;
+using IsmsBot.RegexCommand;
 using Discord.Commands;
 using Discord.WebSocket;
 using Serilog;
