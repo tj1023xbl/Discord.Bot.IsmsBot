@@ -12,7 +12,7 @@ namespace Discord.Bot.IsmsBot
 {
     public class CommandHandler
     {
-        private readonly DiscordSocketClient _discClient;
+        private readonly DiscordSocketClient _discordClient;
         private readonly CommandService _commands;
         private readonly IServiceProvider _servicecs;
 
@@ -23,14 +23,14 @@ namespace Discord.Bot.IsmsBot
         /// <param name="commands"></param>
         public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services) 
         {
-            _discClient = client;
+            _discordClient = client;
             _commands = commands;
             _servicecs = services;
         }
 
         public async Task InstallCommandsAsync() 
         {
-            _discClient.MessageReceived += HandleCommandAsync;
+            _discordClient.MessageReceived += HandleCommandAsync;
 
             await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _servicecs);
 
@@ -40,12 +40,13 @@ namespace Discord.Bot.IsmsBot
                 {
                     // the command failed, let's notify the user that something happened.
                     await context.Channel.SendMessageAsync($"error: {result}");
+                    Log.Error("An error occurred while executing `{0}`. Result: {1}", context.Message, result);
                 }
             };
 
             foreach (var module in _commands.Modules)
             {
-                Log.Debug($"CommandHandler Module '{module.Name}' initialized.");
+                Log.Verbose("CommandHandler Module '{0}' initialized.", module.Name);
             }
         }
 
@@ -60,12 +61,12 @@ namespace Discord.Bot.IsmsBot
 
             // Determine if the message is a command based on the prefix and make sure no bots trigger commands
             if (!(message.HasCharPrefix('!', ref argPos) ||
-                message.HasMentionPrefix(_discClient.CurrentUser, ref argPos)) ||
+                message.HasMentionPrefix(_discordClient.CurrentUser, ref argPos)) ||
                 message.Author.IsBot)
                 return;
 
             // Create a WebSocket-based command context based on the message
-            var context = new SocketCommandContext(_discClient, message);
+            var context = new SocketCommandContext(_discordClient, message);
 
             // Execute the command with the command context we just
             // created, along with the service provider for precondition checks.

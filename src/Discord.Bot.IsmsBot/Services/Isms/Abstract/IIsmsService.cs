@@ -1,4 +1,5 @@
 ﻿using Discord.Bot.Database;
+using Discord.Bot.Database.Models;
 using Discord.Commands;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Discord.Bot.IsmsBot
 {
     public interface IIsmsService
     {
-        public Task<UserSayings> AddIsmAsync(string commandString, SocketCommandContext context);
+        public Task<User> AddIsmAsync(string commandString, SocketCommandContext context);
+        Task<Saying> GetIsmAsync(string username, SocketCommandContext discordContext);
     }
 }

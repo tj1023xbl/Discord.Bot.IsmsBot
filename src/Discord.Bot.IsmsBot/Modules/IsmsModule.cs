@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.Bot.Database.Models;
 using Discord.Commands;
 using Discord.WebSocket;
+using Serilog;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -23,12 +25,12 @@ namespace Discord.Bot.IsmsBot
 
 	   [Command("add")]
 	   [Summary("Adds an ism message")]
-	   public async Task AddIsmAsync([Remainder][Summary("The ism to create")] string ismText) 
+	   public async Task AddIsmAsync([Remainder][Summary("The ism to create")] string ismText)
 	   {
-		  var sayings = await _ismsService.AddIsmAsync(ismText, Context);
-		  if (sayings != null)
+		  var user = await _ismsService.AddIsmAsync(ismText, Context);
+		  if (user != null)
 		  {
-			 await Context.Channel.SendMessageAsync($"Successfully added new saying for {sayings.Username}");
+			 await Context.Channel.SendMessageAsync($"Successfully added new saying for {user.Username}");
 		  }
 		  else 
 		  {
@@ -36,5 +38,22 @@ namespace Discord.Bot.IsmsBot
 		  }
 	   }
 
-    }
+		[Command("tylerism")]
+		public async Task GetIsmAsync(string username)
+        {
+			if (string.IsNullOrEmpty(username)) return;
+
+			Saying ism = await _ismsService.GetIsmAsync(username, Context);
+            if (ism == null)
+            {
+				string msg = $"{username} is not recognized, or does not have any isms yet.";
+				Log.Information(msg);
+				await Context.Message.ReplyAsync(msg);
+			}
+
+			await Context.Message.ReplyAsync($"_{ism.IsmSaying}_");
+
+		}
+
+	}
 }

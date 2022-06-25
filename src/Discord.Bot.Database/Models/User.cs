@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Discord.Bot.Database.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Discord.Bot.Database
 {
-    public partial class UserSayings
+    [Index(nameof(GuildId), nameof(Username), IsUnique = true)]
+    public partial class User
     {
         /// <summary>
         /// The name of the user containing these isms.
@@ -18,16 +21,13 @@ namespace Discord.Bot.Database
         /// <summary>
         /// The list of sayings for this user.
         /// </summary>
-        public List<string> Sayings { get; set; }
+        public ICollection<Saying> Sayings { get; set; }
 
         /// <summary>
-        /// The ID of the parent server object.
+        /// The ID of the Guild this user belongs to.
+        /// User isms are unique across guilds.
         /// </summary>
         public ulong GuildId { get; set; }
 
-        /// <summary>
-        /// The discord server this saying belongs to.
-        /// </summary>
-        public DiscordServer Server { get; set; }
     }
 }

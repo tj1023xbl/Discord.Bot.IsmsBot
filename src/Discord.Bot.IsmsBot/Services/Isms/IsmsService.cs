@@ -1,5 +1,7 @@
 ﻿using Discord.Bot.Database;
+using Discord.Bot.Database.Models;
 using Discord.Commands;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,74 +14,97 @@ namespace Discord.Bot.IsmsBot
     public class IsmsService : IIsmsService
     {
         private readonly UserSayingsContext _dbContext;
-
         private const string ismPattern = "(?<ismKey>[\\s\\S]+ism)\\s\"(?<ism>[\\s\\S]+)\"";
 
-        public IsmsService(UserSayingsContext dbContext) 
+        public IsmsService(
+            UserSayingsContext dbContext
+            ) 
         {
             _dbContext = dbContext;
         }
 
 
-        public async Task<UserSayings> AddIsmAsync(string commandString, SocketCommandContext context)
+        public async Task<User> AddIsmAsync(string commandString, SocketCommandContext discordContext)
         {
-            UserSayings userSayingsContext = null;
+            User userContext = null;
             if (!string.IsNullOrWhiteSpace(commandString)) 
             {
-                
-                await ValidateDiscordServer(context);
-
+                // match the regex pattern for the command string `userism "phrase"`
                 var match = Regex.Match(commandString, ismPattern);
-                string key = match.Groups["ismKey"].Value;
-                string ism = match.Groups["ism"].Value;
 
                 if (!match.Success) 
                 {
                     return null;
                 }
 
-                userSayingsContext = _dbContext.UserSayings.AsQueryable().Where(u => u.Username == key).FirstOrDefault();
+                string username = match.Groups["ismKey"].Value;
+                string ism = match.Groups["ism"].Value;
 
-                if (userSayingsContext == null)
+                userContext = await _dbContext.Users.FindAsync(username);
+
+                if (userContext == null)
                 {
-                    userSayingsContext = new UserSayings()
+                    userContext = new User()
                     {
-                        GuildId = context.Guild.Id,
-                        Username = key,
-                        Sayings = new List<string>() { ism }
+                        GuildId = discordContext.Guild.Id,
+                        Username = username,
+                        Sayings = new List<Saying>() { 
+                            new Saying()
+                            {
+                                Username = username,
+                                DateCreated = DateTime.Now,
+                                IsmRecorder = discordContext.User.Username,
+                                IsmSaying = ism
+                            }
+                        }
                     };
 
-                    _dbContext.UserSayings.Add(userSayingsContext);
+                    _dbContext.Users.Add(userContext);
                 }
                 else 
                 {
-                    userSayingsContext.Sayings.Add(ism);
+                    userContext.Sayings.Add(
+                        new Saying()
+                        {
+                            Username=username,
+                            DateCreated=DateTime.Now,
+                            IsmRecorder=discordContext.User.Username,
+                            IsmSaying = ism
+                        });
                 }
 
                 await _dbContext.SaveChangesAsync();
             }
 
-            return userSayingsContext;
+            return userContext;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        private async Task ValidateDiscordServer(SocketCommandContext context) 
+        public async Task<Saying> GetIsmAsync(string username, SocketCommandContext discordContext)
         {
-            List<DiscordServer> servers = _dbContext.DiscordServers.AsQueryable().Where(s => s.Id == context.Guild.Id).ToList();
-            if (!servers.Any()) 
+            User user = await _dbContext.Users.FindAsync(username);
+            if(user == null)
             {
-                _dbContext.DiscordServers.Add(new DiscordServer()
-                {
-                    Id = context.Guild.Id,
-                    ServerName = context.Guild.Name,
-                });
-
-                await _dbContext.SaveChangesAsync();
+                Log.Information("{0} is not recognized as a user", username);
+                return null;
             }
+
+            // Get random saying
+            var rand = new Random();
+            int toSkip = 0;
+            int count = user.Sayings.Count;
+            if (count > 0) {
+                toSkip = rand.Next(1, count);
+            }
+            Saying saying = user.Sayings.Skip(toSkip).FirstOrDefault();
+
+            if(saying == null)
+            {
+                Log.Information("{0} does not have any isms yet.", username);
+                return null;
+            }
+
+            return saying;
         }
+
     }
 }
