@@ -8,16 +8,16 @@ namespace Discord.Bot.Database.Models
     /// <summary>
     /// The actual record for the user ism. 
     /// This is the class that stores the ism, as well as metadata about the ism.
-    /// Isms are unique among users; they cannot have the same ism twice. 
+    /// Isms are unique among users; they cannot have the same ism. 
     /// </summary>
-    [Index(nameof(Username), nameof(IsmSaying), IsUnique = true)]
+    [Index(nameof(IsmSaying), IsUnique = true)]
     public class Saying
     {
         /// <summary>
-        /// The foreign key to the user who owns this saying
+        /// The primary key for this Saying
         /// </summary>
-        [ForeignKey("User")]
-        public string Username { get; set; }
+        [Key]
+        public Guid Id { get; set; }
 
         /// <summary>
         /// The actual ism saying

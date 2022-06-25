@@ -51,7 +51,6 @@ namespace Discord.Bot.IsmsBot
                         Sayings = new List<Saying>() { 
                             new Saying()
                             {
-                                Username = username,
                                 DateCreated = DateTime.Now,
                                 IsmRecorder = discordContext.User.Username,
                                 IsmSaying = ism
@@ -66,7 +65,6 @@ namespace Discord.Bot.IsmsBot
                     userContext.Sayings.Add(
                         new Saying()
                         {
-                            Username=username,
                             DateCreated=DateTime.Now,
                             IsmRecorder=discordContext.User.Username,
                             IsmSaying = ism
