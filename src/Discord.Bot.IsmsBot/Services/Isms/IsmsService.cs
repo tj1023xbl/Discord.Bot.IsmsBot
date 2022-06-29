@@ -43,6 +43,8 @@ namespace Discord.Bot.IsmsBot
                 try
                 {
                     userContext = await _dbContext.Users.FindAsync(ismKey);
+                    // load the sayings for this user
+                    await _dbContext.Entry(userContext).Collection(u => u.Sayings).LoadAsync();
                 } catch (Exception ex)
                 {
                     Log.Error("Error getting user {0}", ex);
