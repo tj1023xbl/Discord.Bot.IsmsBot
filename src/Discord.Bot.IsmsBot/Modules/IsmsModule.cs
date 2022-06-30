@@ -51,11 +51,11 @@ namespace Discord.Bot.IsmsBot
             {
                 string msg = $"{username} is not recognized, or they don't have any isms yet.";
                 Log.Information(msg);
-                await Context.Message.ReplyAsync(msg);
+                await Context.Channel.SendMessageAsync(msg);
                 return;
             }
 
-            await Context.Message.ReplyAsync($"_{ism.IsmSaying}_");
+            await Context.Channel.SendMessageAsync($"'_{ism.IsmSaying}_' - {username.Replace("ism", "")}");
 
         }
 

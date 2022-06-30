@@ -18,7 +18,7 @@ namespace Discord.Bot.IsmsBot
 
         public IsmsService(
             UserSayingsContext dbContext
-            ) 
+            )
         {
             _dbContext = dbContext;
         }
@@ -28,12 +28,12 @@ namespace Discord.Bot.IsmsBot
         {
             Log.Verbose("Adding saying for `{0}`", commandString);
             User userContext = null;
-            if (!string.IsNullOrWhiteSpace(commandString)) 
+            if (!string.IsNullOrWhiteSpace(commandString))
             {
                 // match the regex pattern for the command string `userism "phrase"`
                 var match = Regex.Match(commandString, ismPattern);
 
-                if (!match.Success) 
+                if (!match.Success)
                 {
                     return null;
                 }
@@ -42,22 +42,28 @@ namespace Discord.Bot.IsmsBot
                 string ism = match.Groups["ism"].Value;
                 try
                 {
+                    // Try to get the userism from the database
                     userContext = await _dbContext.Users.FindAsync(ismKey);
-                    // load the sayings for this user
-                    await _dbContext.Entry(userContext).Collection(u => u.Sayings).LoadAsync();
-                } catch (Exception ex)
+                    if (userContext != null)
+                    {
+                        // load the sayings for this userism
+                        await _dbContext.Entry(userContext).Collection(u => u.Sayings).LoadAsync();
+                    }
+                }
+                catch (Exception ex)
                 {
                     Log.Error("Error getting user {0}", ex);
                     throw;
                 }
 
+                // If the user doesn't exist, create the new userism
                 if (userContext == null)
                 {
                     userContext = new User()
                     {
                         GuildId = discordContext.Guild.Id,
                         IsmKey = ismKey,
-                        Sayings = new List<Saying>() { 
+                        Sayings = new List<Saying>() {
                             new Saying()
                             {
                                 DateCreated = DateTime.Now,
@@ -69,13 +75,13 @@ namespace Discord.Bot.IsmsBot
 
                     _dbContext.Users.Add(userContext);
                 }
-                else 
+                else
                 {
                     userContext.Sayings.Add(
                         new Saying()
                         {
-                            DateCreated=DateTime.Now,
-                            IsmRecorder=discordContext.User.Username,
+                            DateCreated = DateTime.Now,
+                            IsmRecorder = discordContext.User.Username,
                             IsmSaying = ism
                         });
                 }
@@ -92,7 +98,7 @@ namespace Discord.Bot.IsmsBot
                 .Users
                 .FindAsync(ismKey);
 
-            if(user == null)
+            if (user == null)
             {
                 Log.Information("{0} is not recognized as a user", ismKey);
                 return null;
@@ -101,7 +107,7 @@ namespace Discord.Bot.IsmsBot
             // load the sayings for this user
             await _dbContext.Entry(user).Collection(u => u.Sayings).LoadAsync();
 
-            if(user.Sayings == null || !user.Sayings.Any())
+            if (user.Sayings == null || !user.Sayings.Any())
             {
                 Log.Information("{0} does not have any isms yet.", ismKey);
                 return null;
@@ -111,7 +117,8 @@ namespace Discord.Bot.IsmsBot
             var rand = new Random();
             int toSkip = 0;
             int count = user.Sayings != null ? user.Sayings.Count : 0;
-            if (count > 1) {
+            if (count > 1)
+            {
                 toSkip = rand.Next(0, count);
             }
             Saying saying = user.Sayings.Skip(toSkip).FirstOrDefault();
