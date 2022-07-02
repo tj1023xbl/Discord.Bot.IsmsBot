@@ -38,7 +38,7 @@ namespace Discord.Bot.IsmsBot
                     return null;
                 }
 
-                string ismKey = match.Groups["ismKey"].Value;
+                string ismKey = match.Groups["ismKey"].Value.ToLower();
                 string ism = match.Groups["ism"].Value;
                 try
                 {
@@ -94,6 +94,8 @@ namespace Discord.Bot.IsmsBot
 
         public async Task<Saying> GetIsmAsync(string ismKey, SocketCommandContext discordContext)
         {
+            ismKey = ismKey.ToLower();
+
             User user = await _dbContext
                 .Users
                 .FindAsync(ismKey);

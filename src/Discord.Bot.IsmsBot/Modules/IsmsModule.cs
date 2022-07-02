@@ -42,7 +42,7 @@ namespace Discord.Bot.IsmsBot
         [RegexCommand(@"^[a-zA-Z]+ism$")]
         public async Task GetIsmAsync()
         {
-            string username = Context.Message.Content.Substring(1);
+            string username = Context.Message.Content.Substring(1).ToLower();
             Log.Verbose("Message content = {0}", username);
             if (string.IsNullOrEmpty(username)) return;
 
