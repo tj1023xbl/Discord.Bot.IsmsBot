@@ -128,5 +128,18 @@ namespace Discord.Bot.IsmsBot
             return saying;
         }
 
+        public async Task<List<Saying>> GetAllIsmsAsync(string ism)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.IsmKey.Equals(ism));
+            if(user == null)
+            {
+                Log.Error("Error getting all sayings. User {0} was not found", ism);
+                return new List<Saying>();
+            }
+
+            await _dbContext.Entry(user).Collection(u => u.Sayings).LoadAsync();
+
+            return user.Sayings.ToList();
+        }
     }
 }

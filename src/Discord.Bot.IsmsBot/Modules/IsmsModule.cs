@@ -8,6 +8,7 @@ using IsmsBot.RegexCommand;
 using Discord.Commands;
 using Discord.WebSocket;
 using Serilog;
+using System.Text.RegularExpressions;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -15,6 +16,7 @@ namespace Discord.Bot.IsmsBot
     public class IsmsModule : ModuleBase<SocketCommandContext>
     {
         private readonly IIsmsService _ismsService;
+        
 
         /// <summary>
         /// Constructor
@@ -36,6 +38,29 @@ namespace Discord.Bot.IsmsBot
             else
             {
                 await Context.Channel.SendMessageAsync(ErrorResponses.AddIsmsError);
+            }
+        }
+
+        [RegexCommand(@"^(?<key>[a-zA-Z]+ism) (?<command>list)$")]
+        public async Task listIsmAsync(Match match)
+        {
+            var ism = match.Groups.GetValueOrDefault("key").Value.ToLower();
+            var sayings = await _ismsService.GetAllIsmsAsync(ism);
+
+            if (sayings != null && sayings.Any())
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                stringBuilder.AppendLine($"Sayings for {ism}:");
+                foreach (Saying saying in sayings)
+                {
+                    stringBuilder.AppendLine($"{saying.IsmSaying} | added by {saying.IsmRecorder} on {saying.DateCreated}");
+                }
+
+                await Context.Channel.SendMessageAsync(stringBuilder.ToString());
+            } else
+            {
+                await Context.Channel.SendMessageAsync($"{ism} has no sayings");
             }
         }
 

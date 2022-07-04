@@ -13,5 +13,6 @@ namespace Discord.Bot.IsmsBot
     {
         public Task<User> AddIsmAsync(string commandString, SocketCommandContext context);
         Task<Saying> GetIsmAsync(string username, SocketCommandContext discordContext);
+        Task<List<Saying>> GetAllIsmsAsync(string ism);
     }
 }
