@@ -35,6 +35,7 @@ namespace Discord.Bot.Database.Models
         /// </summary>
         public string IsmRecorder { get; set; }
 
+        public string UserIsmKey { get; set; }
 
     }
 }

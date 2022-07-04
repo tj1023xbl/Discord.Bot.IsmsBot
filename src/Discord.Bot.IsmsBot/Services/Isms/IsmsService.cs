@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -116,16 +117,29 @@ namespace Discord.Bot.IsmsBot
             }
 
             // Get random saying
-            var rand = new Random();
             int toSkip = 0;
             int count = user.Sayings != null ? user.Sayings.Count : 0;
             if (count > 1)
             {
-                toSkip = rand.Next(0, count);
+                toSkip = RandomNumberGenerator.GetInt32(count);
             }
             Saying saying = user.Sayings.Skip(toSkip).FirstOrDefault();
 
             return saying;
+        }
+
+        public async Task<Saying> GetRandomSayingAsync()
+        {
+            // Get random saying
+            int toSkip = 0;
+            int count = await _dbContext.Sayings.CountAsync();
+            if (count > 1)
+            {
+                toSkip = RandomNumberGenerator.GetInt32(count);
+            }
+
+            return _dbContext.Sayings.Skip(toSkip).FirstOrDefault();
+            
         }
 
         public async Task<List<Saying>> GetAllIsmsAsync(string ism)

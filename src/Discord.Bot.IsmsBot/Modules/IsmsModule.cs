@@ -64,6 +64,20 @@ namespace Discord.Bot.IsmsBot
             }
         }
 
+        [Command("random")]
+        public async Task GetRandomIsmAsync()
+        {
+            Saying saying = await _ismsService.GetRandomSayingAsync();
+
+            if(saying == null)
+            {
+                await Context.Channel.SendMessageAsync($"Couldn't find any isms to display");
+            }
+
+            await Context.Channel.SendMessageAsync($"{saying.IsmSaying} - {saying.UserIsmKey.Replace("ism", "")} | Added by {saying.IsmRecorder} on {saying.DateCreated}");
+
+        }
+
         [RegexCommand(@"^[a-zA-Z]+ism$")]
         public async Task GetIsmAsync()
         {
