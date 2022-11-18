@@ -36,6 +36,7 @@ namespace Discord.Bot.IsmsBot
 
                 if (!match.Success)
                 {
+                    Log.Verbose("Pattern '{0}' did not match '{1}'", ismPattern, commandString);
                     return null;
                 }
 
@@ -74,6 +75,8 @@ namespace Discord.Bot.IsmsBot
                         }
                     };
 
+                    Log.Debug("Adding new user to database: {0}", userContext.IsmKey);
+
                     _dbContext.Users.Add(userContext);
                 }
                 else
@@ -87,7 +90,12 @@ namespace Discord.Bot.IsmsBot
                         });
                 }
 
-                await _dbContext.SaveChangesAsync();
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+                } catch (Exception e) {
+                    Log.Error(e, "An error occurred while adding an ism.");
+                }
             }
 
             return userContext;
@@ -139,13 +147,13 @@ namespace Discord.Bot.IsmsBot
             }
 
             return _dbContext.Sayings.Skip(toSkip).FirstOrDefault();
-            
+
         }
 
         public async Task<List<Saying>> GetAllIsmsAsync(string ism)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.IsmKey.Equals(ism));
-            if(user == null)
+            if (user == null)
             {
                 Log.Error("Error getting all sayings. User {0} was not found", ism);
                 return new List<Saying>();
