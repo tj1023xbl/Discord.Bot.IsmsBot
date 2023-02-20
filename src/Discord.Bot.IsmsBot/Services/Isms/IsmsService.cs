@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 
 namespace Discord.Bot.IsmsBot
 {
-    public class IsmsService : IIsmsService
+    public class IsmsService
     {
         private readonly UserSayingsContext _dbContext;
         private const string ismPattern = "(?<ismKey>[\\s\\S]+ism)\\s\"(?<ism>[\\s\\S]+)\"";
@@ -25,10 +25,10 @@ namespace Discord.Bot.IsmsBot
         }
 
 
-        public async Task<User> AddIsmAsync(string commandString, SocketCommandContext discordContext)
+        public async Task<Saying> AddIsmAsync(string commandString, SocketCommandContext discordContext)
         {
             Log.Verbose("Adding saying for `{0}`", commandString);
-            User userContext = null;
+            Saying saying = null;
             if (!string.IsNullOrWhiteSpace(commandString))
             {
                 // match the regex pattern for the command string `userism "phrase"`
@@ -45,12 +45,8 @@ namespace Discord.Bot.IsmsBot
                 try
                 {
                     // Try to get the userism from the database
-                    userContext = await _dbContext.Users.FindAsync(ismKey);
-                    if (userContext != null)
-                    {
-                        // load the sayings for this userism
-                        await _dbContext.Entry(userContext).Collection(u => u.Sayings).LoadAsync();
-                    }
+                    saying = await _dbContext.Sayings.FirstOrDefaultAsync(s => s.IsmKey == ismKey && EF.Functions.Like(ism, s.IsmSaying) && s.GuildId == discordContext.Guild.Id);
+
                 }
                 catch (Exception ex)
                 {
@@ -58,85 +54,70 @@ namespace Discord.Bot.IsmsBot
                     throw;
                 }
 
-                // If the user doesn't exist, create the new userism
-                if (userContext == null)
+                // If the saying doesn't exist, create the new userism
+                if (saying == null)
                 {
-                    userContext = new User()
+                    saying = new Saying()
                     {
                         GuildId = discordContext.Guild.Id,
                         IsmKey = ismKey,
-                        Sayings = new List<Saying>() {
-                            new Saying()
-                            {
-                                DateCreated = DateTime.Now,
-                                IsmRecorder = discordContext.User.Username,
-                                IsmSaying = ism
-                            }
-                        }
+                        DateCreated = DateTime.Now,
+                        IsmRecorder = discordContext.User.Username,
+                        IsmSaying = ism
                     };
 
-                    Log.Debug("Adding new user to database: {0}", userContext.IsmKey);
+                    Log.Debug("Adding new user to database: {0} on server {1}", saying.IsmKey, discordContext.Guild.Id);
 
-                    _dbContext.Users.Add(userContext);
+                    _dbContext.Sayings.Add(saying);
                 }
                 else
                 {
-                    userContext.Sayings.Add(
-                        new Saying()
-                        {
-                            DateCreated = DateTime.Now,
-                            IsmRecorder = discordContext.User.Username,
-                            IsmSaying = ism
-                        });
+                    // if the saying exists, don't create a new one
+                    Log.Warning("This userism {0} already exists.", ism);
+                    throw new Exception("The userism already exists for that user on this server");
                 }
 
                 try
                 {
                     await _dbContext.SaveChangesAsync();
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     Log.Error(e, "An error occurred while adding an ism.");
                 }
             }
 
-            return userContext;
+            return saying;
         }
 
         public async Task<Saying> GetIsmAsync(string ismKey, SocketCommandContext discordContext)
         {
             ismKey = ismKey.ToLower();
 
-            User user = await _dbContext
-                .Users
-                .FindAsync(ismKey);
+            var query =  _dbContext
+                .Sayings
+                .Where(s => s.GuildId == discordContext.Guild.Id && ismKey == s.IsmKey);
 
-            if (user == null)
+            var count = query.Count();
+
+            if (count == 0)
             {
-                Log.Information("{0} is not recognized as a user", ismKey);
-                return null;
-            }
-
-            // load the sayings for this user
-            await _dbContext.Entry(user).Collection(u => u.Sayings).LoadAsync();
-
-            if (user.Sayings == null || !user.Sayings.Any())
-            {
-                Log.Information("{0} does not have any isms yet.", ismKey);
+                Log.Information("{0} doesn't seem to have any isms on this server yet.", ismKey);
                 return null;
             }
 
             // Get random saying
             int toSkip = 0;
-            int count = user.Sayings != null ? user.Sayings.Count : 0;
             if (count > 1)
             {
                 toSkip = RandomNumberGenerator.GetInt32(count);
             }
-            Saying saying = user.Sayings.Skip(toSkip).FirstOrDefault();
+            Saying saying = query.Skip(toSkip).FirstOrDefault();
 
             return saying;
         }
 
-        public async Task<Saying> GetRandomSayingAsync()
+        public async Task<Saying> GetRandomSayingAsync(SocketCommandContext context)
         {
             // Get random saying
             int toSkip = 0;
@@ -146,22 +127,19 @@ namespace Discord.Bot.IsmsBot
                 toSkip = RandomNumberGenerator.GetInt32(count);
             }
 
-            return _dbContext.Sayings.Skip(toSkip).FirstOrDefault();
+            return _dbContext.Sayings.Where(s => s.GuildId == context.Guild.Id).Skip(toSkip).FirstOrDefault();
 
         }
 
-        public async Task<List<Saying>> GetAllIsmsAsync(string ism)
+        public async Task<List<Saying>> GetAllIsmsAsync(string ismKey, SocketCommandContext context)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.IsmKey.Equals(ism));
-            if (user == null)
+            var sayings = await _dbContext.Sayings.Where(s => s.IsmKey.Equals(ismKey) && s.GuildId == context.Guild.Id).ToListAsync();
+            if (sayings == null)
             {
-                Log.Error("Error getting all sayings. User {0} was not found", ism);
+                Log.Error("Error getting all sayings. User {0} doesn't seem to have any sayings on this server yet.", ismKey);
                 return new List<Saying>();
             }
-
-            await _dbContext.Entry(user).Collection(u => u.Sayings).LoadAsync();
-
-            return user.Sayings.ToList();
+            return sayings;
         }
     }
 }

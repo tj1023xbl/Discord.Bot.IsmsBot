@@ -61,7 +61,7 @@ namespace Discord.Bot.IsmsBot
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<IDiscordProxy, DiscordProxy>()
-                .AddSingleton<IIsmsService, IsmsService>()
+                .AddSingleton(typeof(IsmsService))
                 .AddDbContext<UserSayingsContext>();
 
             var serviceProvider = services.BuildServiceProvider();

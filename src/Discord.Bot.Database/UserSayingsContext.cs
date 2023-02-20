@@ -10,7 +10,6 @@ namespace Discord.Bot.Database
 {
     public class UserSayingsContext : DbContext
     {
-        public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Saying> Sayings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 

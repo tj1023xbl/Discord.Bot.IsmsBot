@@ -11,6 +11,7 @@ namespace Discord.Bot.Database.Models
     /// Isms are unique among users; they cannot have the same ism. 
     /// </summary>
     [Index(nameof(IsmSaying), IsUnique = true)]
+    [Index(nameof(IsmKey), nameof(GuildId), IsUnique = false)]
     public class Saying
     {
         /// <summary>
@@ -18,6 +19,13 @@ namespace Discord.Bot.Database.Models
         /// </summary>
         [Key]
         public Guid Id { get; set; }
+
+        /// <summary>
+        /// The name of the user containing these isms.
+        /// </summary>
+        [Required]
+        public string IsmKey { get; set; }
+
 
         /// <summary>
         /// The actual ism saying
@@ -28,14 +36,21 @@ namespace Discord.Bot.Database.Models
         /// <summary>
         /// The date and time when the ism was recorded
         /// </summary>
+        [Required]
         public DateTime DateCreated { get; set; }
 
         /// <summary>
         /// The username for the person who added this ism record
         /// </summary>
+        [Required]
         public string IsmRecorder { get; set; }
 
-        public string UserIsmKey { get; set; }
+        /// <summary>
+        /// The ID of the Guild this user belongs to.
+        /// User isms are unique across guilds.
+        /// </summary>
+        [Required]
+        public ulong GuildId { get; set; }
 
     }
 }

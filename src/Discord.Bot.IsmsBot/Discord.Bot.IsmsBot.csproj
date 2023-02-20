@@ -31,4 +31,8 @@
     <ProjectReference Include="..\Discord.Bot.Database\Discord.Bot.Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Isms\Abstract\" />
+  </ItemGroup>
+
 </Project>

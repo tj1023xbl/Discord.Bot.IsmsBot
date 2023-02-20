@@ -15,13 +15,13 @@ namespace Discord.Bot.IsmsBot
     [LoadRegexCommands]
     public class IsmsModule : ModuleBase<SocketCommandContext>
     {
-        private readonly IIsmsService _ismsService;
+        private readonly IsmsService _ismsService;
         
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public IsmsModule(IIsmsService ismsService)
+        public IsmsModule(IsmsService ismsService)
         {
             _ismsService = ismsService;
         }
@@ -45,7 +45,7 @@ namespace Discord.Bot.IsmsBot
         public async Task listIsmAsync(Match match)
         {
             var ism = match.Groups.GetValueOrDefault("key").Value.ToLower();
-            var sayings = await _ismsService.GetAllIsmsAsync(ism);
+            var sayings = await _ismsService.GetAllIsmsAsync(ism, Context);
 
             if (sayings != null && sayings.Any())
             {
@@ -60,21 +60,21 @@ namespace Discord.Bot.IsmsBot
                 await Context.Channel.SendMessageAsync(stringBuilder.ToString());
             } else
             {
-                await Context.Channel.SendMessageAsync($"{ism} has no sayings");
+                await Context.Channel.SendMessageAsync($"{ism} has no sayings on this server yet.");
             }
         }
 
         [Command("random")]
         public async Task GetRandomIsmAsync()
         {
-            Saying saying = await _ismsService.GetRandomSayingAsync();
+            Saying saying = await _ismsService.GetRandomSayingAsync(Context);
 
             if(saying == null)
             {
                 await Context.Channel.SendMessageAsync($"Couldn't find any isms to display");
             }
 
-            await Context.Channel.SendMessageAsync($"{saying.IsmSaying} - {saying.UserIsmKey.Replace("ism", "")} | Added by {saying.IsmRecorder} on {saying.DateCreated}");
+            await Context.Channel.SendMessageAsync($"{saying.IsmSaying} - {saying.IsmKey.Replace("ism", "")} | Added by {saying.IsmRecorder} on {saying.DateCreated}");
 
         }
 
@@ -88,7 +88,7 @@ namespace Discord.Bot.IsmsBot
             Saying ism = await _ismsService.GetIsmAsync(username, Context);
             if (ism == null)
             {
-                string msg = $"{username} is not recognized, or they don't have any isms yet.";
+                string msg = $"{username} is not recognized, or they don't have any isms on this server yet.";
                 Log.Information(msg);
                 await Context.Channel.SendMessageAsync(msg);
                 return;

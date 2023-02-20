@@ -3,6 +3,7 @@ using System;
 using Discord.Bot.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Discord.Bot.Database.Migrations
 {
     [DbContext(typeof(UserSayingsContext))]
-    partial class UserSayingsContextModelSnapshot : ModelSnapshot
+    [Migration("20230219225108_add guild")]
+    partial class addguild
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
@@ -45,8 +47,6 @@ namespace Discord.Bot.Database.Migrations
 
                     b.HasIndex("IsmSaying")
                         .IsUnique();
-
-                    b.HasIndex("IsmKey", "GuildId");
 
                     b.ToTable("Sayings");
                 });
