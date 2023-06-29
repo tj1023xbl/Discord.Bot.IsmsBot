@@ -15,7 +15,18 @@ namespace Discord.Bot.IsmsBot
     public class IsmsService
     {
         private readonly UserSayingsContext _dbContext;
-        private const string ismPattern = "(?<ismKey>[\\s\\S]+ism)\\s\"(?<ism>[\\s\\S]+)\"";
+
+
+        private static readonly List<char> left_quote_characters = new List<char>() {
+            '\u0022', // QUOTATION MARK
+            '\u201C', // LEFT DOUBLE QUOTATION MARK
+          };
+        private static readonly List<char> right_quote_characters = new List<char>() {
+            '\u0022', // QUOTATION MARK
+            '\u201D'  // RIGHT DOUBLE QUOTATION MARK
+        };
+
+        private static readonly string ismPattern = $"(?<ismKey>[\\s\\S]+ism)\\s+[{String.Join("", left_quote_characters)}](?<ism>[\\s\\S]+)[{String.Join("", right_quote_characters)}]";
 
         public IsmsService(
             UserSayingsContext dbContext
@@ -84,6 +95,7 @@ namespace Discord.Bot.IsmsBot
                 catch (Exception e)
                 {
                     Log.Error(e, "An error occurred while adding an ism.");
+                    throw;
                 }
             }
 
@@ -94,7 +106,7 @@ namespace Discord.Bot.IsmsBot
         {
             ismKey = ismKey.ToLower();
 
-            var query =  _dbContext
+            var query = _dbContext
                 .Sayings
                 .Where(s => s.GuildId == discordContext.Guild.Id && ismKey == s.IsmKey);
 

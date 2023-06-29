@@ -10,7 +10,7 @@ namespace Discord.Bot.Database.Models
     /// This is the class that stores the ism, as well as metadata about the ism.
     /// Isms are unique among users; they cannot have the same ism. 
     /// </summary>
-    [Index(nameof(IsmSaying), IsUnique = true)]
+    [Index(nameof(IsmSaying), nameof(GuildId), IsUnique = true)]
     [Index(nameof(IsmKey), nameof(GuildId), IsUnique = false)]
     public class Saying
     {

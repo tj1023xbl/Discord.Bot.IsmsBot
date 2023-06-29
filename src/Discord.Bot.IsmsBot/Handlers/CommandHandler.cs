@@ -21,14 +21,14 @@ namespace Discord.Bot.IsmsBot
         /// </summary>
         /// <param name="client"></param>
         /// <param name="commands"></param>
-        public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services) 
+        public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services)
         {
             _discordClient = client;
             _commands = commands;
             _servicecs = services;
         }
 
-        public async Task InstallCommandsAsync() 
+        public async Task InstallCommandsAsync()
         {
             _discordClient.MessageReceived += HandleCommandAsync;
 
@@ -40,7 +40,8 @@ namespace Discord.Bot.IsmsBot
                 {
                     // the command failed, let's notify the user that something happened.
                     await context.Channel.SendMessageAsync($"error: {result}");
-                    Log.Error("An error occurred while executing `{0}`. Result: {1}", context.Message, result);
+                    Log.ForContext("Result", result, true)
+                    .Error("An error occurred while executing `{0}`. Result: {1}", context.Message, result);
                 }
             };
 
@@ -52,7 +53,6 @@ namespace Discord.Bot.IsmsBot
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
         {
-            Log.Verbose("Message received: `{0}`", messageParam);
             // Don't process the command if it was a system message
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
