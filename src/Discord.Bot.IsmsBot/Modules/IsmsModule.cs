@@ -52,9 +52,21 @@ namespace Discord.Bot.IsmsBot
                 StringBuilder stringBuilder = new StringBuilder();
 
                 stringBuilder.AppendLine($"Sayings for {ism}:");
+                int count = 0;
                 foreach (Saying saying in sayings)
                 {
-                    stringBuilder.AppendLine($"{saying.IsmSaying} | added by {saying.IsmRecorder} on {saying.DateCreated}");
+                    count++;
+
+                    string msg = $"{saying.IsmSaying} | added by {saying.IsmRecorder} on {saying.DateCreated}";
+
+                    // Make sure the output is less than 2000 characters
+                    if ((msg.Length + stringBuilder.Length) >= 2000)
+                    {
+                        await Context.Channel.SendMessageAsync(stringBuilder.ToString());
+                        stringBuilder.Clear();
+                    }
+
+                    stringBuilder.AppendLine(msg);
                 }
 
                 await Context.Channel.SendMessageAsync(stringBuilder.ToString());
