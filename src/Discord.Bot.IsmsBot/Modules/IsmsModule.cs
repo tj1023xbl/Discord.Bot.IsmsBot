@@ -85,8 +85,8 @@ namespace Discord.Bot.IsmsBot
             {
                 await Context.Channel.SendMessageAsync($"Couldn't find any isms to display");
             }
-
-            await Context.Channel.SendMessageAsync($"{saying.IsmSaying} - {saying.IsmKey.Replace("ism", "")} | Added by {saying.IsmRecorder} on {saying.DateCreated}");
+            
+            await Context.Channel.SendMessageAsync($"{saying.IsmSaying} - {saying.IsmKey.Replace("ism", "")} | Added by {saying.IsmRecorder} on {saying.DateCreated}", isTTS: true);
 
         }
 
