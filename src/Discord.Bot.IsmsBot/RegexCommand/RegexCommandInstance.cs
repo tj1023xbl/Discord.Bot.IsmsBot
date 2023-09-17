@@ -46,32 +46,48 @@ namespace IsmsBot.RegexCommand
 
         public static RegexCommandInstance Build(MethodInfo method, RegexCommandAttribute regexAttribute, IServiceProvider services)
         {
-            Log.Debug("Building regex command instance");
-            if (method == null)
-                throw new ArgumentNullException(nameof(method));
-            if (regexAttribute == null)
-                throw new ArgumentNullException(nameof(regexAttribute));
+            try
+            {
+                Log.Debug("Building regex command instance");
+                if (method == null)
+                {
+                    Log.Error("Method was null in 'Build'");
+                    throw new ArgumentNullException(nameof(method));
+                }
 
-            // init instance
-            CommandOptions options = services.GetService<IOptions<CommandOptions>>()?.Value;
-            RegexOptions regexOptions = regexAttribute.RegexOptions;
-            if (options?.CaseSensitive != true)
-                regexOptions |= RegexOptions.IgnoreCase;
-            IRegexCommandModuleProvider moduleProvider = services.GetRequiredService<IRegexCommandModuleProvider>();
-            RegexCommandInstance result = new RegexCommandInstance(new Regex(regexAttribute.Pattern, regexOptions), method, moduleProvider);
-            result.RunMode = options?.DefaultRunMode ?? RunMode.Default;
+                if (regexAttribute == null)
+                {
+                    Log.Error("regexAttribute was null in 'Build'");
+                    throw new ArgumentNullException(nameof(regexAttribute));
+                }
 
-            // first load base type attributes
-            result.LoadCustomAttributes(method.DeclaringType);
-            // then load method attributes (and let them overwrite class ones if necessary)
-            result.LoadCustomAttributes(method);
+                // init instance
+                CommandOptions options = services.GetService<IOptions<CommandOptions>>()?.Value;
+                RegexOptions regexOptions = regexAttribute.RegexOptions;
+                if (options?.CaseSensitive != true)
+                    regexOptions |= RegexOptions.IgnoreCase;
+                IRegexCommandModuleProvider moduleProvider = services.GetRequiredService<IRegexCommandModuleProvider>();
+                RegexCommandInstance result = new RegexCommandInstance(new Regex(regexAttribute.Pattern, regexOptions), method, moduleProvider);
+                result.RunMode = options?.DefaultRunMode ?? RunMode.Default;
 
-            // pre-init if requested - this may be the case if module listens to some gateway events directly
-            PersistentModuleAttribute persistent = method.DeclaringType.GetCustomAttribute<PersistentModuleAttribute>();
-            if (persistent != null && persistent.PreInitialize)
-                result._moduleProvider.GetModuleInstance(result);
+                // first load base type attributes
+                result.LoadCustomAttributes(method.DeclaringType);
+                // then load method attributes (and let them overwrite class ones if necessary)
+                result.LoadCustomAttributes(method);
 
-            return result;
+                // pre-init if requested - this may be the case if module listens to some gateway events directly
+                PersistentModuleAttribute persistent = method.DeclaringType.GetCustomAttribute<PersistentModuleAttribute>();
+                if (persistent != null && persistent.PreInitialize)
+                    result._moduleProvider.GetModuleInstance(result);
+
+                Log.Verbose("Returning result...");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred in the 'build' method of RegexCommandInstance.");
+                throw;
+            }
         }
 
         private void LoadCustomAttributes(ICustomAttributeProvider provider)
@@ -154,7 +170,7 @@ namespace IsmsBot.RegexCommand
             object instance = _moduleProvider.GetModuleInstance(this);
 
             // Set the context on the object
-            if(instance is ModuleBase<SocketCommandContext>)
+            if (instance is ModuleBase<SocketCommandContext>)
             {
                 (instance as IModuleBase).SetContext(context);
             }

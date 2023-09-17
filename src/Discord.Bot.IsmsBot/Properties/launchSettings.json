@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Discord.Bot.IsmsBot": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

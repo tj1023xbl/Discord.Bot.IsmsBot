@@ -7,14 +7,16 @@ using Discord.WebSocket;
 using Discord.Commands;
 using IsmsBot.RegexCommand;
 using Discord.Bot.Database;
+using Microsoft.Extensions.Hosting;
+using Discord.Bot.IsmsBot.Services;
 
 namespace Discord.Bot.IsmsBot
 {
     class Program
     {
-        private readonly IConfiguration _config;  
+        private readonly IConfiguration _config;
 
-        public Program() 
+        public Program()
         {
             // Create the configuration
             var builder = new ConfigurationBuilder()
@@ -25,33 +27,27 @@ namespace Discord.Bot.IsmsBot
             _config = builder.Build();
         }
 
-        public static Task Main(string[] args) => new Program().MainAsync();
+        public static Task Main(string[] args) => new Program().MainAsync(args);
 
         /// <summary>
         /// Main Method
         /// </summary>
         /// <returns></returns>
-        public async Task MainAsync() 
+        public async Task MainAsync(string[] args)
         {
-            using (var services = ConfigureServices())
-            {
-                SetupLogging();
-                var discordProxy = services.GetService<IDiscordProxy>();
 
-                try
-                {
-                    await discordProxy.RunDiscordApp();
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e.Message);
-                }
-            }
+            IHostBuilder builder = Host.CreateDefaultBuilder(args)
+                .ConfigureServices((context, services) => ConfigureServices(context, services));
+                SetupLogging();
+
+            IHost host = builder.Build();
+            await host.RunAsync();
+            
         }
 
-        private ServiceProvider ConfigureServices()
+        private ServiceProvider ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            var services = new ServiceCollection().AddSingleton(_config)
+            services.AddSingleton(_config)
 
                 // Add regex command services
                 .AddScoped<RegexCommandHandler>()
@@ -62,7 +58,8 @@ namespace Discord.Bot.IsmsBot
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<IDiscordProxy, DiscordProxy>()
                 .AddSingleton(typeof(IsmsService))
-                .AddDbContext<UserSayingsContext>();
+                .AddDbContext<UserSayingsContext>()
+                .AddHostedService<Worker>();
 
             var serviceProvider = services.BuildServiceProvider();
             return serviceProvider;
@@ -71,7 +68,7 @@ namespace Discord.Bot.IsmsBot
         /// <summary>
         /// Sets up logging options.
         /// </summary>
-        private void SetupLogging() 
+        private void SetupLogging()
         {
             Log.Logger = Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()

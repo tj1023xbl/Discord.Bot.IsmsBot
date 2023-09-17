@@ -34,18 +34,10 @@ namespace Discord.Bot.IsmsBot
         {
             _disClient.Log += DiscordLogAsync;
 
-            _disClient.LoggedIn += () => {
-                Log.Information("Discord bot logged in as {0}", _disClient.CurrentUser);
-                return Task.CompletedTask;
-            };
-
             await _disClient.LoginAsync(TokenType.Bot, GetToken());
             await _disClient.StartAsync();
             await _handler.InstallCommandsAsync();
             await _regexCommandHandler.InitializeCommandsAsync();
-
-            // Idle until any key is pressed. Then gracefully close the app.
-            await Task.Factory.StartNew(() => Console.ReadLine());
         }
 
         /// <summary>
@@ -83,7 +75,7 @@ namespace Discord.Bot.IsmsBot
                 tokenVar = Console.ReadLine();
             }
             
-            var token = Environment.GetEnvironmentVariable(tokenVar, EnvironmentVariableTarget.Machine);
+            var token = Environment.GetEnvironmentVariable(tokenVar);
 
             if (string.IsNullOrWhiteSpace(token))
             {

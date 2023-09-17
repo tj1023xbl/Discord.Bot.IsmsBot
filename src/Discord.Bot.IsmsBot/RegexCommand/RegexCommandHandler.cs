@@ -37,19 +37,33 @@ namespace IsmsBot.RegexCommand
 
         public async Task InitializeCommandsAsync()
         {
-            await this._lock.WaitAsync(_hostCancellationToken).ConfigureAwait(false);
             try
             {
+                await this._lock.WaitAsync(_hostCancellationToken);
                 this._log.Debug("Initializing commands");
 
                 this._commands.Clear();
                 CommandOptions options = this._commandOptions;
                 foreach (Assembly asm in options.Assemblies)
+                {
+                    Log.Verbose("Adding assembly '{0}'", asm.FullName);
                     this.AddAssembly(asm);
+                    Log.Verbose("Finished adding assembly '{0}'", asm.FullName);
+
+                }
                 foreach (Type t in options.Classes)
+                {
+                    Log.Verbose("Adding type from options.Classes '{0}'", t.Name);
                     this.AddType(t.GetTypeInfo());
+                    Log.Verbose("Finished adding type from options.Classes '{0}'", t.Name);
+                }
 
                 this._commands = _commands.OrderByDescending(cmd => cmd.Priority).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "There was an error in the initialization method 'InitializeCommandsAsync'");
+                throw;
             }
             finally
             {
@@ -67,7 +81,12 @@ namespace IsmsBot.RegexCommand
                 return;
             }
             foreach (TypeInfo type in types)
+            {
+                Log.Verbose("Adding type '{0}'", type.Name);
                 AddType(type);
+                Log.Verbose("Finished adding method '{0}'", type.Name);
+
+            }
         }
 
         private void AddType(TypeInfo type)
@@ -79,7 +98,11 @@ namespace IsmsBot.RegexCommand
                 return;
             }
             foreach (MethodInfo method in methods)
+            {
+                Log.Verbose("Adding method '{0}'", method.Name);
                 AddMethod(method);
+                Log.Verbose("Finished adding method '{0}'", method.Name);
+            }
         }
 
         private void AddMethod(MethodInfo method)
@@ -91,7 +114,11 @@ namespace IsmsBot.RegexCommand
                 return;
             }
             foreach (RegexCommandAttribute attribute in attributes)
+            {
+                Log.Verbose("Adding command '{0}'", nameof(attribute));
                 _commands.Add(RegexCommandInstance.Build(method, attribute, _serviceProvider));
+                Log.Verbose("Finished adding command '{0}'", nameof(attribute));
+            }
         }
 
         private async Task HandleCommandAsync(SocketMessage msg)
