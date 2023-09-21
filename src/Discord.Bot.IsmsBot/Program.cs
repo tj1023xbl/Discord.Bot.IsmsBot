@@ -9,6 +9,8 @@ using IsmsBot.RegexCommand;
 using Discord.Bot.Database;
 using Microsoft.Extensions.Hosting;
 using Discord.Bot.IsmsBot.Services;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -61,7 +63,15 @@ namespace Discord.Bot.IsmsBot
                 .AddDbContext<UserSayingsContext>()
                 .AddHostedService<Worker>();
 
+
             var serviceProvider = services.BuildServiceProvider();
+            using (var dbContext = serviceProvider.GetRequiredService<UserSayingsContext>())
+            {
+                Log.Verbose("Ensuring the database is created...");
+                dbContext.Database.EnsureCreated();
+                Log.Information("SQLite database created at '{0}'", dbContext.Database.GetConnectionString());
+            }
+
             return serviceProvider;
         }
 
@@ -70,12 +80,16 @@ namespace Discord.Bot.IsmsBot
         /// </summary>
         private void SetupLogging()
         {
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "IsmsBot", "IsmsBotLog.log");
             Log.Logger = Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
             .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.File("C:\\logging\\discordBot\\logs.log")
+            .WriteTo.File(path, rollingInterval: RollingInterval.Month, rollOnFileSizeLimit: true, fileSizeLimitBytes: 1024*1024*10)
             .CreateLogger();
+
+            Log.Information("Logs will be stored at {0}", path);
+
         }
     }
 }

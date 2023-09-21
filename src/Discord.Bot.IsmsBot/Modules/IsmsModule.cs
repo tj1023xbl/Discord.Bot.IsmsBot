@@ -83,10 +83,11 @@ namespace Discord.Bot.IsmsBot
 
             if(saying == null)
             {
-                await Context.Channel.SendMessageAsync($"Couldn't find any isms to display");
+                await Context.Channel.SendMessageAsync($"Couldn't find any isms to display from this server.");
+                return;
             }
             
-            await Context.Channel.SendMessageAsync($"{saying.IsmSaying} - {saying.IsmKey.Replace("ism", "")} | Added by {saying.IsmRecorder} on {saying.DateCreated}", isTTS: true);
+            await Context.Channel.SendMessageAsync($"{saying.IsmSaying} - {saying.IsmKey.Replace("ism", "")} | Added by {saying.IsmRecorder} on {saying.DateCreated}");
 
         }
 
@@ -108,6 +109,12 @@ namespace Discord.Bot.IsmsBot
 
             await Context.Channel.SendMessageAsync($"'_{ism.IsmSaying}_' - {username.Replace("ism", "")}");
 
+        }
+
+        [Command("help")]
+        public async Task GetHelp()
+        {
+            await Context.Message.ReplyAsync(_ismsService.GetHelpAsync());
         }
 
     }
