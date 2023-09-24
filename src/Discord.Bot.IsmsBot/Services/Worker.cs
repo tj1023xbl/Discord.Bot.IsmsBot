@@ -30,6 +30,7 @@ namespace Discord.Bot.IsmsBot.Services
             catch (Exception e)
             {
                 Log.Error(e.Message);
+                throw;
             }
 
         }

@@ -16,7 +16,7 @@ namespace Discord.Bot.IsmsBot
     public class IsmsModule : ModuleBase<SocketCommandContext>
     {
         private readonly IsmsService _ismsService;
-        
+
 
         /// <summary>
         /// Constructor
@@ -70,7 +70,8 @@ namespace Discord.Bot.IsmsBot
                 }
 
                 await Context.Channel.SendMessageAsync(stringBuilder.ToString());
-            } else
+            }
+            else
             {
                 await Context.Channel.SendMessageAsync($"{ism} has no sayings on this server yet.");
             }
@@ -81,12 +82,12 @@ namespace Discord.Bot.IsmsBot
         {
             Saying saying = await _ismsService.GetRandomSayingAsync(Context);
 
-            if(saying == null)
+            if (saying == null)
             {
                 await Context.Channel.SendMessageAsync($"Couldn't find any isms to display from this server.");
                 return;
             }
-            
+
             await Context.Channel.SendMessageAsync($"{saying.IsmSaying} - {saying.IsmKey.Replace("ism", "")} | Added by {saying.IsmRecorder} on {saying.DateCreated}");
 
         }
@@ -109,6 +110,20 @@ namespace Discord.Bot.IsmsBot
 
             await Context.Channel.SendMessageAsync($"'_{ism.IsmSaying}_' - {username.Replace("ism", "")}");
 
+        }
+
+        [Command("listallkeys")]
+        public async Task GetListOfServerIsmsAsync()
+        {
+            try
+            {
+                var isms = await _ismsService.GetAllIsmKeysForServerAsync(Context);
+                await Context.Message.ReplyAsync("Here is a list of all the isms on this server:\n" + string.Join("\n", isms));
+            }
+            catch (Exception e)
+            {
+                await Context.Channel.SendMessageAsync($"{e.Message}");
+            }
         }
 
         [Command("help")]

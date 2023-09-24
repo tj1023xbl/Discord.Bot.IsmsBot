@@ -2,8 +2,6 @@
 # Build the dotnet api
 FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine3.18 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 ENV IS_DOCKER TRUE
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 RUN apk update  \

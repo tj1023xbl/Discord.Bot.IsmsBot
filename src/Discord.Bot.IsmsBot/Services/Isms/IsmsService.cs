@@ -9,6 +9,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.VisualBasic;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -35,7 +37,13 @@ namespace Discord.Bot.IsmsBot
             _dbContext = dbContext;
         }
 
-
+        /// <summary>
+        /// Add an ism saying for a user on a server
+        /// </summary>
+        /// <param name="commandString"></param>
+        /// <param name="discordContext"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<Saying> AddIsmAsync(string commandString, SocketCommandContext discordContext)
         {
             Log.Verbose("Adding saying for `{0}`", commandString);
@@ -102,6 +110,12 @@ namespace Discord.Bot.IsmsBot
             return saying;
         }
 
+        /// <summary>
+        /// Get a random saying from a user from a server
+        /// </summary>
+        /// <param name="ismKey"></param>
+        /// <param name="discordContext"></param>
+        /// <returns></returns>
         public async Task<Saying> GetIsmAsync(string ismKey, SocketCommandContext discordContext)
         {
             ismKey = ismKey.ToLower();
@@ -129,6 +143,11 @@ namespace Discord.Bot.IsmsBot
             return saying;
         }
 
+        /// <summary>
+        /// Get a random saying from the list of sayings on a server
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task<Saying> GetRandomSayingAsync(SocketCommandContext context)
         {
             // Get random saying
@@ -143,6 +162,12 @@ namespace Discord.Bot.IsmsBot
             return saying;
         }
 
+        /// <summary>
+        /// Retrieve all ism sayings for a user
+        /// </summary>
+        /// <param name="ismKey"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task<List<Saying>> GetAllIsmsAsync(string ismKey, SocketCommandContext context)
         {
             var sayings = await _dbContext.Sayings.Where(s => s.IsmKey.Equals(ismKey) && s.GuildId == context.Guild.Id).ToListAsync();
@@ -152,6 +177,18 @@ namespace Discord.Bot.IsmsBot
                 return new List<Saying>();
             }
             return sayings;
+        }
+
+        public async Task<List<string>> GetAllIsmKeysForServerAsync(SocketCommandContext context)
+        {
+            var ismKeys = await _dbContext.Sayings.Where(s => s.GuildId == context.Guild.Id).Select(s => s.IsmKey).Distinct().ToListAsync();
+            if (ismKeys == null)
+            {
+                string msg = "Error getting all ism keys for this server. Perhaps there are no sayings on this server yet.";
+                Log.Information(msg);
+                throw new InvalidOperationException(msg);
+            }
+            return ismKeys;
         }
 
         public string GetHelpAsync()
