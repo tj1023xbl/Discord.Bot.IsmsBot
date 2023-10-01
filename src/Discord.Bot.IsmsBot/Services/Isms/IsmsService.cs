@@ -220,6 +220,14 @@ namespace Discord.Bot.IsmsBot
                    - Used to retrieve a random saying from any user
                    - SYNTAX: `!random`
                    - EXAMPLE `!random` --> "This is a random saying from a random user" - tyler | Added by TJ on \<DATE\>
+                - `!listallkeys`
+                   - Used to retrieve all ism keys from a server.
+                   - SYNTAX `!listallkeys`
+                   - EXAMPLE    `!listallkeys` --> 
+                                Here is a list of all the isms on this server:
+                                tylerism
+                                tjism
+                                alexism
                 """;
             return msg;
         }
