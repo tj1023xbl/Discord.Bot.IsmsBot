@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Discord.Bot.Database.Migrations
 {
-    [DbContext(typeof(UserSayingsContext))]
+    [DbContext(typeof(AppDBContext))]
     [Migration("20230219225108_add guild")]
     partial class addguild
     {

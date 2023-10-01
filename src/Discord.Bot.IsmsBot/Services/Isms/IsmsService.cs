@@ -11,14 +11,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.VisualBasic;
+using Discord.Bot.Database.Repositories;
 
 namespace Discord.Bot.IsmsBot
 {
     public class IsmsService
     {
-        private readonly UserSayingsContext _dbContext;
-
-
         private static readonly List<char> left_quote_characters = new List<char>() {
             '\u0022', // QUOTATION MARK
             '\u201C', // LEFT DOUBLE QUOTATION MARK
@@ -29,12 +27,13 @@ namespace Discord.Bot.IsmsBot
         };
 
         private static readonly string ismPattern = $"(?<ismKey>[\\s\\S]+ism)\\s+[{String.Join("", left_quote_characters)}](?<ism>[\\s\\S]+)[{String.Join("", right_quote_characters)}]";
+        private SayingRepository _sayingsRepo;
 
         public IsmsService(
-            UserSayingsContext dbContext
+            SayingRepository sayingRepository
             )
         {
-            _dbContext = dbContext;
+            _sayingsRepo = sayingRepository;
         }
 
         /// <summary>
@@ -64,12 +63,12 @@ namespace Discord.Bot.IsmsBot
                 try
                 {
                     // Try to get the userism from the database
-                    saying = await _dbContext.Sayings.FirstOrDefaultAsync(s => s.IsmKey == ismKey && EF.Functions.Like(ism, s.IsmSaying) && s.GuildId == discordContext.Guild.Id);
+                    saying = await _sayingsRepo.GetSayingAsync(ismKey, ism, discordContext.Guild.Id);
 
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Error getting user {0}", ex);
+                    Log.Error(ex, "Error getting user saying");
                     throw;
                 }
 
@@ -86,8 +85,15 @@ namespace Discord.Bot.IsmsBot
                     };
 
                     Log.Debug("Adding new user to database: {0} on server {1}", saying.IsmKey, discordContext.Guild.Id);
-
-                    _dbContext.Sayings.Add(saying);
+                    try
+                    {
+                        await _sayingsRepo.AddIsmAsync(saying);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e, "An error occurred while adding an ism.");
+                        throw;
+                    }
                 }
                 else
                 {
@@ -96,15 +102,6 @@ namespace Discord.Bot.IsmsBot
                     throw new Exception("The userism already exists for that user on this server");
                 }
 
-                try
-                {
-                    await _dbContext.SaveChangesAsync();
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e, "An error occurred while adding an ism.");
-                    throw;
-                }
             }
 
             return saying;
@@ -119,28 +116,7 @@ namespace Discord.Bot.IsmsBot
         public async Task<Saying> GetIsmAsync(string ismKey, SocketCommandContext discordContext)
         {
             ismKey = ismKey.ToLower();
-
-            var query = _dbContext
-                .Sayings
-                .Where(s => s.GuildId == discordContext.Guild.Id && ismKey == s.IsmKey);
-
-            var count = query.Count();
-
-            if (count == 0)
-            {
-                Log.Information("{0} doesn't seem to have any isms on this server yet.", ismKey);
-                return null;
-            }
-
-            // Get random saying
-            int toSkip = 0;
-            if (count > 1)
-            {
-                toSkip = RandomNumberGenerator.GetInt32(count);
-            }
-            Saying saying = query.Skip(toSkip).FirstOrDefault();
-
-            return saying;
+            return await _sayingsRepo.GetRandomIsmAsync(ismKey, discordContext.Guild.Id);
         }
 
         /// <summary>
@@ -151,15 +127,7 @@ namespace Discord.Bot.IsmsBot
         public async Task<Saying> GetRandomSayingAsync(SocketCommandContext context)
         {
             // Get random saying
-            int toSkip = 0;
-            IQueryable<Saying> query = _dbContext.Sayings.Where(s => s.GuildId == context.Guild.Id);
-            int count = await query.CountAsync();
-            if (count > 1)
-            {
-                toSkip = RandomNumberGenerator.GetInt32(count);
-            }
-            var saying = query.Skip(toSkip).FirstOrDefault();
-            return saying;
+            return await _sayingsRepo.GetRandomIsmAsync(context.Guild.Id);
         }
 
         /// <summary>
@@ -170,25 +138,18 @@ namespace Discord.Bot.IsmsBot
         /// <returns></returns>
         public async Task<List<Saying>> GetAllIsmsAsync(string ismKey, SocketCommandContext context)
         {
-            var sayings = await _dbContext.Sayings.Where(s => s.IsmKey.Equals(ismKey) && s.GuildId == context.Guild.Id).ToListAsync();
-            if (sayings == null)
-            {
-                Log.Error("Error getting all sayings. User {0} doesn't seem to have any sayings on this server yet.", ismKey);
-                return new List<Saying>();
-            }
-            return sayings;
+            return await _sayingsRepo.GetAllIsmsAsync(ismKey, context.Guild.Id);
         }
 
+        /// <summary>
+        /// Get all the unique ism keys for the server.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<List<string>> GetAllIsmKeysForServerAsync(SocketCommandContext context)
         {
-            var ismKeys = await _dbContext.Sayings.Where(s => s.GuildId == context.Guild.Id).Select(s => s.IsmKey).Distinct().ToListAsync();
-            if (ismKeys == null)
-            {
-                string msg = "Error getting all ism keys for this server. Perhaps there are no sayings on this server yet.";
-                Log.Information(msg);
-                throw new InvalidOperationException(msg);
-            }
-            return ismKeys;
+            return await _sayingsRepo.GetAllIsmKeysForServerAsync(context.Guild.Id);
         }
 
         public string GetHelpAsync()

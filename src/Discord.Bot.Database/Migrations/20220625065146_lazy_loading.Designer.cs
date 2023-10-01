@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Discord.Bot.Database.Migrations
 {
-    [DbContext(typeof(UserSayingsContext))]
+    [DbContext(typeof(AppDBContext))]
     [Migration("20220625065146_lazy_loading")]
     partial class lazy_loading
     {

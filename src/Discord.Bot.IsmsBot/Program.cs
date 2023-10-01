@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Discord.Bot.IsmsBot.Services;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using Discord.Bot.Database.Repositories;
+using System.Threading;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -40,16 +42,18 @@ namespace Discord.Bot.IsmsBot
 
             IHostBuilder builder = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) => ConfigureServices(context, services));
-                SetupLogging();
+            SetupLogging();
 
             IHost host = builder.Build();
             await host.RunAsync();
-            
+
         }
 
         private ServiceProvider ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
+            SemaphoreSlim databaseSemaphore = new SemaphoreSlim(1, 1);
             services.AddSingleton(_config)
+
 
                 // Add regex command services
                 .AddScoped<RegexCommandHandler>()
@@ -60,12 +64,13 @@ namespace Discord.Bot.IsmsBot
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<IDiscordProxy, DiscordProxy>()
                 .AddSingleton(typeof(IsmsService))
-                .AddDbContext<UserSayingsContext>()
+                .AddDbContext<AppDBContext>()
+                .AddScoped((services) => new SayingRepository(services.GetService<AppDBContext>(), databaseSemaphore))
                 .AddHostedService<Worker>();
 
 
             var serviceProvider = services.BuildServiceProvider();
-            using (var dbContext = serviceProvider.GetRequiredService<UserSayingsContext>())
+            using (var dbContext = serviceProvider.GetRequiredService<AppDBContext>())
             {
                 Log.Verbose("Ensuring the database is created...");
                 dbContext.Database.EnsureCreated();
@@ -85,7 +90,7 @@ namespace Discord.Bot.IsmsBot
             .MinimumLevel.Verbose()
             .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.File(path, rollingInterval: RollingInterval.Month, rollOnFileSizeLimit: true, fileSizeLimitBytes: 1024*1024*10)
+            .WriteTo.File(path, rollingInterval: RollingInterval.Month, rollOnFileSizeLimit: true, fileSizeLimitBytes: 1024 * 1024 * 10)
             .CreateLogger();
 
             Log.Information("Logs will be stored at {0}", path);

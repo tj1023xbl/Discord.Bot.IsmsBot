@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Discord.Bot.Database.Migrations
 {
-    [DbContext(typeof(UserSayingsContext))]
+    [DbContext(typeof(AppDBContext))]
     partial class UserSayingsContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

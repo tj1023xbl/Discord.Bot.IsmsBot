@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Discord.Bot.Database.Migrations
 {
-    [DbContext(typeof(UserSayingsContext))]
+    [DbContext(typeof(AppDBContext))]
     [Migration("20220625061242_Init")]
     partial class Init
     {

@@ -8,7 +8,7 @@ using Serilog;
 
 namespace Discord.Bot.Database
 {
-    public class UserSayingsContext : DbContext
+    public class AppDBContext : DbContext
     {
         public virtual DbSet<Saying> Sayings { get; set; }
 
