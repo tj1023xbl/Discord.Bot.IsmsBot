@@ -51,10 +51,8 @@ namespace Discord.Bot.IsmsBot
 
         private ServiceProvider ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            SemaphoreSlim databaseSemaphore = new SemaphoreSlim(1, 1);
+            SemaphoreSlim databaseSemaphore = new SemaphoreSlim(1, 1); 
             services.AddSingleton(_config)
-
-
                 // Add regex command services
                 .AddScoped<RegexCommandHandler>()
                 .AddScoped<CommandOptions>()
