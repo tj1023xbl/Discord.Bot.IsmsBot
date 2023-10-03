@@ -19,7 +19,7 @@ export interface IsmState {
 export const getAllGuildsAsyncThunk = createAsyncThunk(
     'thunks/createAsyncThunk',
     async (props) => {
-        const url = '/api/Isms/GetAllGuildsAsync';
+        const url = '/api/Isms/GetAllGuilds';
         const getAllGuildsResponse = await axios({
             method: 'get',
             url: url,
