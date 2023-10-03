@@ -1,0 +1,12 @@
+@import 'variables.scss';
+
+.container {
+    background: $background-dark;
+    display: flex;
+    flex: 1;
+    padding: 5px;
+}
+
+.intro {
+    color: $yellow-dark;
+}
