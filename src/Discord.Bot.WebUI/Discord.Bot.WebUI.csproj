@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\public\fonts\" />
+    <Folder Include="ClientApp\src\data\models\" />
     <Folder Include="ClientApp\typings\" />
     <Folder Include="ClientApp\src\components\" />
   </ItemGroup>

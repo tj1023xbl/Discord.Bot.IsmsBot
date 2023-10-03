@@ -50,6 +50,7 @@ namespace Discord.Bot.Database.Models
         /// User isms are unique across guilds.
         /// </summary>
         [Required]
+        [ForeignKey(nameof(Guild))]
         public ulong GuildId { get; set; }
 
     }

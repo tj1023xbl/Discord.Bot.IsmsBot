@@ -3,14 +3,14 @@ using System.IO;
 using Discord.Bot.Database.Models;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Serilog;
 
 namespace Discord.Bot.Database
 {
     public class AppDBContext : DbContext
     {
-        public virtual DbSet<Saying> Sayings { get; set; }
+        public DbSet<Saying> Sayings { get; set; }
+        public DbSet<Guild> Guilds { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
         {
@@ -43,6 +43,11 @@ namespace Discord.Bot.Database
             var connectionString = connectionStringBuilder.ToString();
             var connection = new SqliteConnection(connectionString);
             optionsBuilder.UseSqlite(connection);
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {              
+                
         }
 
     }
