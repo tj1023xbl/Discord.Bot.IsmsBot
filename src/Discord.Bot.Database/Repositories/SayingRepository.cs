@@ -133,5 +133,17 @@ namespace Discord.Bot.Database.Repositories
             });
         }
 
+        /// <summary>
+        /// Get a list of all servers from the database
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Guild>> GetAllGuildsAsync()
+        {
+            return await this.ShieldDb(async (db) =>
+            {
+                return await db.Guilds.ToListAsync();
+            });
+        }
+
     }
 }

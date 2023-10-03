@@ -15,6 +15,9 @@ using Discord.Bot.Database.Repositories;
 
 namespace Discord.Bot.IsmsBot
 {
+    /// <summary>
+    /// Discord Bot implementaion of the IsmService for use in the bot to interact with the database
+    /// </summary>
     public class IsmsService
     {
         private static readonly List<char> left_quote_characters = new List<char>() {
