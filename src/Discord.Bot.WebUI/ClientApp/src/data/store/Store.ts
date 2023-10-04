@@ -1,9 +1,10 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
-import { IsmSlice } from './IsmSlice';
+import { GuildSlice, IsmSlice } from './IsmSlice';
 
 export const store = configureStore({
     reducer: {
-        Isms: IsmSlice.reducer
+        Isms: IsmSlice.reducer,
+        Guilds: GuildSlice.reducer
     }
 })
 

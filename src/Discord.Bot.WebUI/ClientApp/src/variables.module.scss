@@ -1,0 +1,17 @@
+// theme
+$background-light: #36393c80;
+$background-dark: #191919;
+$yellow-dark: #ffbf00;
+$yellow-light: #fedc56;
+$blue-dark: #00308f;
+$blue-light: #0073cf;
+//$brown:
+
+:export {
+     background_light: $background-light;
+     background_dark: $background-dark;
+     yellow_dark: $yellow-dark;
+     yellow_light: $yellow-light;
+     blue_dark: $blue-dark;
+     blue_light: $blue-light;
+}

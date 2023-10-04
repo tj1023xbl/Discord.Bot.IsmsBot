@@ -34,5 +34,5 @@ export default interface Saying {
      * The ID of the Guild this user belongs to.
      * User isms are unique across guilds.
      */
-    guildId: number;
+    guildId: string;
 }

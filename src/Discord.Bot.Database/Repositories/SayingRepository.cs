@@ -126,8 +126,8 @@ namespace Discord.Bot.Database.Repositories
                 if (ismKeys == null)
                 {
                     string msg = "Error getting all ism keys for this server. Perhaps there are no sayings on this server yet.";
-                    Log.Information(msg);
-                    throw new InvalidOperationException(msg);
+                    Log.Warning(msg);
+                    throw new ApplicationException(msg);
                 }
                 return ismKeys;
             });
@@ -142,6 +142,29 @@ namespace Discord.Bot.Database.Repositories
             return await this.ShieldDb(async (db) =>
             {
                 return await db.Guilds.ToListAsync();
+            });
+        }
+
+
+        /// <summary>
+        /// Get all the sayings for all users for the server.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task<List<Saying>> GetAllIsmsForServerAsync(ulong guildID)
+        {
+            return await this.ShieldDb(async (db) =>
+            {
+                var blah = await db.Sayings.Select(s => s.GuildId).ToListAsync();
+                var isms = await db.Sayings.Where(s => s.GuildId == guildID).ToListAsync();
+                if (isms == null)
+                {
+                    string msg = "Error getting all ism keys for this server. Perhaps there are no sayings on this server yet.";
+                    Log.Warning(msg);
+                    throw new ApplicationException(msg);
+                }
+                return isms;
             });
         }
 

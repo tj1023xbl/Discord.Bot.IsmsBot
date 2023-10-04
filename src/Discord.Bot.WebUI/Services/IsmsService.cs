@@ -1,5 +1,6 @@
 ﻿using Discord.Bot.Database.Models;
 using Discord.Bot.Database.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Discord.Bot.WebUI.Services
 {
@@ -23,6 +24,11 @@ namespace Discord.Bot.WebUI.Services
         public async Task<List<Guild>> GetAllGuildsAsync()
         {
             return await _sayingsRepo.GetAllGuildsAsync();
+        }
+
+        public async Task<List<Saying>> GetAllIsmsAsync(ulong guildId)
+        {
+            return await _sayingsRepo.GetAllIsmsForServerAsync(guildId);
         }
 
     }
