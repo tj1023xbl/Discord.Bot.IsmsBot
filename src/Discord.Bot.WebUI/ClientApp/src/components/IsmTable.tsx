@@ -1,4 +1,4 @@
-import { createTheme, Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, tableContainerClasses, TableHead, TableRow } from "@mui/material"
+import { createTheme, Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, tableRowClasses } from "@mui/material"
 import styleVariables from '../variables.module.scss'
 import Saying from "../data/models/Saying"
 import { ThemeProvider } from "@emotion/react";
@@ -27,20 +27,40 @@ function getComparator<Key extends keyof any>(
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-const StyledTableCell = styled(TableCell)({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: '#303030',
-        color: 'whitesmoke',
-        //fontWeight: 600,
-        fontSize: '1.5em',
-        borderTop: `1px solid ${styleVariables.yellow_light}`
-    },
-    [`&.${tableCellClasses.body}`]: {
-        backgroundColor: '#505050',
-        color: 'whitesmoke'
+const customTheme = createTheme({
+    components: {
+        MuiTableRow: {
+            styleOverrides: {
+                head: {
+                    backgroundColor: `#101010 !important`,
+                    ['&:hover']: {
+                        backgroundColor: `#101010 !important`,
+                    }
+
+                },
+                root: {
+                    backgroundColor: '#404040',
+                    ['&:nth-of-type(odd)']: {
+                        backgroundColor: '#303030',
+                    },
+                    ['&:hover']: {
+                        backgroundColor: '#202020 !important',
+                    }
+                },
+            },
+        },
+        MuiTableCell: {
+            styleOverrides: {
+                root: {
+                    color: `whitesmoke`
+                },
+                head: {
+                    color: `${styleVariables.yellow_dark} !important`,
+                }
+            }
+        }
     }
 })
-
 
 export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
 
@@ -48,30 +68,32 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <StyledTableCell>Saying</StyledTableCell>
-                            <StyledTableCell>Key</StyledTableCell>
-                            <StyledTableCell>DateTime</StyledTableCell>
-                            <StyledTableCell>Recorder</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {sayings.map((saying) => {
-                            return (
-                                <TableRow key={saying.id}>
-                                    <StyledTableCell>{saying.ismSaying}</StyledTableCell>
-                                    <StyledTableCell>{saying.ismKey}</StyledTableCell>
-                                    <StyledTableCell>{saying.dateCreated.toString()}</StyledTableCell>
-                                    <StyledTableCell>{saying.ismRecorder}</StyledTableCell>
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <ThemeProvider theme={customTheme}>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Saying</TableCell>
+                                <TableCell>Key</TableCell>
+                                <TableCell>DateTime</TableCell>
+                                <TableCell>Recorder</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {sayings.map((saying) => {
+                                return (
+                                    <TableRow key={saying.id}>
+                                        <TableCell>{saying.ismSaying}</TableCell>
+                                        <TableCell>{saying.ismKey}</TableCell>
+                                        <TableCell>{saying.dateCreated.toString()}</TableCell>
+                                        <TableCell>{saying.ismRecorder}</TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </ThemeProvider>
         </>
     )
 }
