@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/Discord.Bot.IsmsBot/bin/Debug/net5.0/Discord.Bot.IsmsBot.dll",
+            "program": "${workspaceFolder}/src/Discord.Bot.IsmsBot/bin/Debug/net7.0/Discord.Bot.IsmsBot.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Discord.Bot.IsmsBot",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
