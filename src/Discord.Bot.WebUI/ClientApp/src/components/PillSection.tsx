@@ -64,7 +64,7 @@ export const PillSection = () => {
                     )
                     :
                     (
-                        <Stack direction="row" spacing={1} style={{marginBottom: '40px'}}>
+                        <Stack direction="row" spacing={1}>
                             <ThemeProvider theme={customTheme}>
                                 {guilds.map((guild) => {
                                     return <Chip onClick={() => handleClick(guild)} label={guild.name} key={guild.id} variant={guild.id === activeGuild?.id ? 'filled' : 'outlined'} ></Chip>

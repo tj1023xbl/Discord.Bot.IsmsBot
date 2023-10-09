@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@emotion/react';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styles from './App.module.scss';
@@ -5,6 +6,7 @@ import { IsmTable } from './components/IsmTable';
 import { PillSection } from './components/PillSection';
 import { getAllSayingsAsyncThunk } from './data/store/IsmSlice';
 import { AppDispatch, RootState } from './data/store/Store';
+import customTheme from './custom-theme'
 
 /**
  * Homepage
@@ -22,15 +24,18 @@ export default function App() {
     }, [activeGuild])
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.intro}>Isms Bot</h1>
-            <section>
-                <PillSection />
+        <ThemeProvider theme={customTheme}>
 
-                <IsmTable sayings={sayingsState.value} />
-                
-            </section>
-        </div >
+            <div className={styles.container}>
+                <section>
+                    <h1 className={styles.intro}>Isms Bot</h1>
+                    <PillSection />
+                </section>
+                <section>
+                    <IsmTable sayings={sayingsState.value} />
+                </section>
+            </div >
+        </ThemeProvider>
     )
 }
 
