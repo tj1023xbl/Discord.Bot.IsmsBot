@@ -1,11 +1,11 @@
-import { createTheme, Paper, Table, TableBody, TableCell, Input, TableContainer, TableHead, TableRow, FormControl, InputLabel, TextField, textFieldClasses, InputAdornment, typographyClasses, OutlinedInput, outlinedInputClasses, CircularProgress, IconButton, Icon } from "@mui/material"
+import { createTheme, Table, TableBody, TableCell, Input, TableContainer, TableHead, TableRow, FormControl, InputLabel, TextField, textFieldClasses, InputAdornment, typographyClasses, OutlinedInput, outlinedInputClasses, CircularProgress, IconButton, Icon, inputBaseClasses } from "@mui/material"
+import { styled } from '@mui/material/styles'
 import { Backspace, Clear } from '@mui/icons-material'
 import styleVariables from '../variables.module.scss'
 import Saying from "../data/models/Saying"
-import { ThemeProvider } from "@emotion/react";
 import { SetStateAction, useCallback, useState } from "react";
 import styles from './IsmTable.module.scss'
-
+import moment from 'moment'
 
 type Order = 'asc' | 'desc';
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -42,6 +42,29 @@ const Adornment = ({ setFilter }: { setFilter: React.Dispatch<SetStateAction<str
     )
 }
 
+const StyledFilterInput = styled(TextField, {
+    shouldForwardProp: () => true,
+    label: 'styled-filter-input',
+
+})({
+    '& .focused fieldset': {
+        borderColor: ` ${styleVariables.yellow_dark} !important`
+    },
+    '& .root .outline': {
+        borderColor: 'whitesmoke',
+    },
+    '.outline:hover ': {
+        borderColor: 'gold'
+    },
+    'label.Mui-focused': {
+        color: styleVariables.yellow_dark
+    },
+    '& input':{
+        color: 'whitesmoke'
+    }
+
+})
+
 
 export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
 
@@ -56,32 +79,29 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
     return (
         sayings.length > 0 ?
             <>
-                    <TextField className={ styles.filterTextField } onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined'
-                        InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null }} />
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Saying</TableCell>
-                                    <TableCell>Key</TableCell>
-                                    <TableCell>DateTime</TableCell>
-                                    <TableCell>Recorder</TableCell>
+                <StyledFilterInput InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null, classes: { root: 'root', focused: 'focused', input: 'imput', notchedOutline: 'outline' } }} className={styles.filterTextField} onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined' />
+                <Table className={styles.ismTable}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Saying</TableCell>
+                            <TableCell>Key</TableCell>
+                            <TableCell>DateTime</TableCell>
+                            <TableCell>Recorder</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {sayings.filter(handleFilter).map((saying) => {
+                            return (
+                                <TableRow key={saying.id}>
+                                    <TableCell>{saying.ismSaying}</TableCell>
+                                    <TableCell>{saying.ismKey}</TableCell>
+                                    <TableCell className={styles.date}>{moment(saying.dateCreated).format("MMM Do 'YY")}</TableCell>
+                                    <TableCell>{saying.ismRecorder}</TableCell>
                                 </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {sayings.filter(handleFilter).map((saying) => {
-                                    return (
-                                        <TableRow key={saying.id}>
-                                            <TableCell>{saying.ismSaying}</TableCell>
-                                            <TableCell>{saying.ismKey}</TableCell>
-                                            <TableCell>{saying.dateCreated.toString()}</TableCell>
-                                            <TableCell>{saying.ismRecorder}</TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
             </>
             :
             <div className={styles.loading} >

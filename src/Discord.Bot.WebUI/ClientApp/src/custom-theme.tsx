@@ -1,4 +1,4 @@
-import { createTheme, outlinedInputClasses, typographyClasses } from "@mui/material";
+import { createTheme, iconButtonClasses, inputBaseClasses, outlinedInputClasses, typographyClasses } from "@mui/material";
 import styleVariables from './variables.module.scss'
 
 const customTheme = createTheme({
@@ -78,10 +78,19 @@ const customTheme = createTheme({
             styleOverrides: {
                 root: {
                     marginBottom: '15px',
-                    [`&${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]: {
-                        borderColor: `${styleVariables.yellow_light}`,
+                    [`&${outlinedInputClasses.focused}.${outlinedInputClasses.notchedOutline}.${outlinedInputClasses.root}.MuiInputBase-colorPrimary`]: {
+                        borderColor: styleVariables.yellow_light,
                         color: `${styleVariables.yellow_dark}  !important`,
                     },
+                }
+            }
+        },
+        MuiButtonBase: {
+            styleOverrides: {
+                root: {
+                    [`&.${iconButtonClasses.root}`]: {
+                        color: 'red'
+                    }
                 }
             }
         }

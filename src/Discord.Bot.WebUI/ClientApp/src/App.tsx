@@ -24,18 +24,16 @@ export default function App() {
     }, [activeGuild])
 
     return (
-        <ThemeProvider theme={customTheme}>
 
-            <div className={styles.container}>
-                <section>
-                    <h1 className={styles.intro}>Isms Bot</h1>
-                    <PillSection />
-                </section>
-                <section>
-                    <IsmTable sayings={sayingsState.value} />
-                </section>
-            </div >
-        </ThemeProvider>
+        <div className={styles.container}>
+            <section>
+                <h1 className={styles.intro}>Isms Bot</h1>
+                <PillSection />
+            </section>
+            <section>
+                <IsmTable sayings={sayingsState.value} />
+            </section>
+        </div >
     )
 }
 

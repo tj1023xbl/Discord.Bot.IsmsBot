@@ -1,7 +1,58 @@
 @import '../variables.module.scss';
 
-table {
-    border: unset;
+
+.filterTextField {
+    color: whitesmoke;
+
+    div.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-formControl.MuiInputBase-adornedEnd {
+        color: inherit;
+
+        input {
+            color: inherit;
+        }
+    }
+
+    label {
+        color: inherit;
+    }
+}
+
+.ismTable {
+    border-radius: 0;
+
+    tr {
+        background-color: #404040;
+
+        &:nth-of-type(odd) {
+            background-color: #303030;
+        }
+
+        td {
+            color: inherit;
+            border: none;
+        }
+    }
+
+    thead {
+        border-radius: unset;
+        color: whitesmoke;
+        border-radius: 0;
+
+        tr {
+
+            th {
+                background-color: #101010;
+                color: inherit;
+                border-radius: 0;
+                border: none;
+            }
+        }
+    }
+
+    .date {
+        white-space: nowrap;
+        word-break: keep-all;
+    }
 }
 
 .loading {
@@ -13,12 +64,4 @@ table {
 
 .clearButton {
     color: #900000
-}
-
-.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-formControl{
-    border-color: $yellow-light
-}
-
-.MuiInputBase-colorPrimary {
-    border-color: $yellow-light
 }
