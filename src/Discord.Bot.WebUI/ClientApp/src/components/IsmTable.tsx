@@ -76,9 +76,9 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
     }
 
     const handleFilter = useCallback((saying: Saying) => {
-        return saying.ismKey.includes(filter) ||
-            saying.ismRecorder.includes(filter) ||
-            saying.ismSaying.includes(filter)
+        return saying.ismKey.toLowerCase().includes(filter.toLowerCase()) ||
+            saying.ismRecorder.toLowerCase().includes(filter.toLowerCase()) ||
+            saying.ismSaying.toLowerCase().includes(filter.toLowerCase())
     }, [filter])
 
 
