@@ -1,11 +1,12 @@
-import { createTheme, Table, TableBody, TableCell, Input, TableContainer, TableHead, TableRow, FormControl, InputLabel, TextField, textFieldClasses, InputAdornment, typographyClasses, OutlinedInput, outlinedInputClasses, CircularProgress, IconButton, Icon, inputBaseClasses } from "@mui/material"
+import { Table, TableBody, TableCell, TableHead, TableRow, TextField, CircularProgress } from "@mui/material"
 import { styled } from '@mui/material/styles'
-import { Backspace, Clear } from '@mui/icons-material'
 import styleVariables from '../variables.module.scss'
 import Saying from "../data/models/Saying"
-import { SetStateAction, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import styles from './IsmTable.module.scss'
 import moment from 'moment'
+import Adornment from "./Adornment"
+import EditModal from "./edit-modal/EditModal";
 
 type Order = 'asc' | 'desc';
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -31,17 +32,6 @@ function getComparator<Key extends keyof any>(
 }
 
 
-
-const Adornment = ({ setFilter }: { setFilter: React.Dispatch<SetStateAction<string>> }) => {
-    return (
-        <InputAdornment position="end">
-            <IconButton className={styles.clearButton} onClick={(e) => { setFilter('') }}>
-                <Backspace />
-            </IconButton>
-        </InputAdornment>
-    )
-}
-
 const StyledFilterInput = styled(TextField, {
     shouldForwardProp: () => true,
     label: 'styled-filter-input',
@@ -59,7 +49,7 @@ const StyledFilterInput = styled(TextField, {
     'label.Mui-focused': {
         color: styleVariables.yellow_dark
     },
-    '& input':{
+    '& input': {
         color: 'whitesmoke'
     }
 
@@ -69,6 +59,19 @@ const StyledFilterInput = styled(TextField, {
 export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
 
     const [filter, setFilter] = useState('');
+    const [modalOpen, setModalOpen] = useState(false);
+    const [activeSaying, setActiveSaying] = useState<Saying | null>(null)
+
+    const openSayingEditModal = (saying: Saying) => {
+        setActiveSaying(saying);
+        setModalOpen(true);
+    }
+
+    const handleModalClose = () => {
+        setActiveSaying(null);
+        setModalOpen(false);
+
+    }
 
     const handleFilter = useCallback((saying: Saying) => {
         return saying.ismKey.includes(filter) ||
@@ -76,9 +79,18 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
             saying.ismSaying.includes(filter)
     }, [filter])
 
+    console.log("RENDER", activeSaying)
+
     return (
         sayings.length > 0 ?
             <>
+                {
+                    activeSaying !== null ?
+                        <>
+                            <h1>asdasdasdasd</h1>
+                            < EditModal isModalOpen={modalOpen} saying={activeSaying} handleClose={handleModalClose} />
+                        </> : null
+                }
                 <StyledFilterInput InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null, classes: { root: 'root', focused: 'focused', input: 'imput', notchedOutline: 'outline' } }} className={styles.filterTextField} onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined' />
                 <Table className={styles.ismTable}>
                     <TableHead>
@@ -92,7 +104,7 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
                     <TableBody>
                         {sayings.filter(handleFilter).map((saying) => {
                             return (
-                                <TableRow key={saying.id}>
+                                <TableRow key={saying.id} onClick={() => openSayingEditModal(saying)} style={{ cursor: 'pointer' }}>
                                     <TableCell>{saying.ismSaying}</TableCell>
                                     <TableCell>{saying.ismKey}</TableCell>
                                     <TableCell className={styles.date}>{moment(saying.dateCreated).format("MMM Do 'YY")}</TableCell>
