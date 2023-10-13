@@ -7,6 +7,8 @@ import styles from './IsmTable.module.scss'
 import moment from 'moment'
 import Adornment from "./Adornment"
 import EditModal from "./edit-modal/EditModal";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
 type Order = 'asc' | 'desc';
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -79,16 +81,21 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
             saying.ismSaying.includes(filter)
     }, [filter])
 
-    console.log("RENDER", activeSaying)
 
     return (
         sayings.length > 0 ?
-            <>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
                 {
                     activeSaying !== null ?
                         <>
                             <h1>asdasdasdasd</h1>
-                            < EditModal isModalOpen={modalOpen} saying={activeSaying} handleClose={handleModalClose} />
+                            < EditModal
+                                isModalOpen={modalOpen}
+                                saying={activeSaying}
+                                handleClose={handleModalClose}
+                                ismKeyList={new Set(sayings.map(s => s.ismKey))}
+                                recorderList={new Set(sayings.map(s => s.ismRecorder))}
+                            />
                         </> : null
                 }
                 <StyledFilterInput InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null, classes: { root: 'root', focused: 'focused', input: 'imput', notchedOutline: 'outline' } }} className={styles.filterTextField} onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined' />
@@ -114,8 +121,7 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
                         })}
                     </TableBody>
                 </Table>
-            </>
-            :
+            </LocalizationProvider> :
             <div className={styles.loading} >
                 <CircularProgress size={64} />
             </div>
