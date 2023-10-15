@@ -21,13 +21,19 @@
     border-radius: 0;
 
     tr {
-        background-color: #404040;
+        &:hover {
+            background-color: $yellow_dark !important;
+        }
 
+        background-color: #404040;
+        
         &:nth-of-type(odd) {
             background-color: #303030;
         }
 
+
         td {
+            background-color: inherit;
             color: inherit;
             border: none;
         }

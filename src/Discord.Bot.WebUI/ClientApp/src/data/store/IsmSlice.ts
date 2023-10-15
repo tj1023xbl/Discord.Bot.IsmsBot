@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 import Saying from "../models/Saying";
+import { AppDispatch } from "./Store";
 
 
 export interface Guild {
@@ -35,19 +36,28 @@ export const getAllGuildsAsyncThunk = createAsyncThunk(
     }
 )
 
+/**
+ * Execute API request to gat all sayings for a server
+ * @param guildId 
+ * @returns 
+ */
+const getAllSayingAsync = async (guildId: string) => {
+    const url = '/api/Isms/GetAllSayings/' + guildId
+    const getAllSayingsResponse = await axios({
+        method: 'get',
+        url: url,
+        responseType: 'json',
+        headers: {
+            'Content-Type': 'application-json'
+        }
+    });
+    return getAllSayingsResponse.data
+}
+
 export const getAllSayingsAsyncThunk = createAsyncThunk(
     'thunks/getAllSayingsAsyncThunk',
     async (guildId: string) => {
-        const url = '/api/Isms/GetAllSayings/' + guildId
-        const getAllSayingsResponse = await axios({
-            method: 'get',
-            url: url,
-            responseType: 'json',
-            headers: {
-                'Content-Type': 'application-json'
-            }
-        });
-        return getAllSayingsResponse.data
+        return await getAllSayingAsync(guildId);
     }
 )
 
@@ -94,6 +104,22 @@ export const GuildSlice = createSlice({
     }
 });
 
+const deleteIsmAPICallAsync = createAsyncThunk(
+    'thunks/deleteIsmAPICallAsync',
+    async (saying: Saying) => {
+        const url = '/api/Isms/' + saying.id;
+        const response = await axios({
+            method: 'delete',
+            url: url,
+            responseType: 'json',
+            headers: {
+                'Content-Type': 'application-json'
+            }
+        })
+        const blah = await getAllSayingAsync(saying.guildId);
+        return blah;
+    });
+
 export const IsmSlice = createSlice({
     name: 'IsmListSlice',
     initialState: {
@@ -101,8 +127,11 @@ export const IsmSlice = createSlice({
         value: [],
         error: null
     } as IsmState,
-    reducers: {},
+    reducers: {
+
+    },
     extraReducers: (builder) => {
+        // GET SAYINGS
         builder.addCase(getAllSayingsAsyncThunk.pending, (state) => {
             state.status = 'loading';
             state.error = null;
@@ -118,6 +147,23 @@ export const IsmSlice = createSlice({
             state.status = 'failed';
             state.value = [];
         });
+
+        // DELETE SAYINGS
+        builder.addCase(deleteIsmAPICallAsync.pending, (state) => {
+            state.status = 'loading';
+            state.error = null;
+        });
+        builder.addCase(deleteIsmAPICallAsync.fulfilled, (state, action: any) => {
+            state.error = null;
+            state.status = 'complete';
+            state.value = action.payload;
+        });
+        builder.addCase(deleteIsmAPICallAsync.rejected, (state, action: any) => {
+            state.error = action.error.message;
+            state.status = 'failed';
+        });
+
+
     }
 })
 

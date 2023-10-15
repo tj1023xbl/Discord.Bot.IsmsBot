@@ -1,6 +1,6 @@
 import { Modal } from "@mui/base";
-import { DateRange } from "@mui/icons-material";
-import { Autocomplete, Dialog, Popover, TextField } from "@mui/material";
+import { Cancel, Check, CheckBox, DateRange, DeleteOutline, Edit } from "@mui/icons-material";
+import { Autocomplete, Button, Dialog, Icon, IconButton, Popover, TextField, Tooltip } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -45,17 +45,32 @@ const EditModal = ({ isModalOpen, saying, handleClose, ismKeyList, recorderList 
                         value={_internalSaying.ismKey}
                         freeSolo
                         onChange={(e, value) => handleChange({ ismKey: value })}
-                        renderInput={(params) => <TextField { ...params } sx={sx} label="Whose ism is it?"   />} />
+                        renderInput={(params) => <TextField {...params} sx={sx} label="Whose ism is it?" />} />
                     <TextField sx={sx} multiline label="Ism Saying" value={_internalSaying.ismSaying} />
                     <Autocomplete
                         options={Array.from(recorderList)}
                         freeSolo
                         value={_internalSaying.ismRecorder}
                         onChange={(e, value) => handleChange({ ismRecorder: value })}
-                        renderInput={(params) => <TextField {...params} sx={sx} label="Who recorded the ism?"  />} />
+                        renderInput={(params) => <TextField {...params} sx={sx} label="Who recorded the ism?" />} />
                     <LocalizationProvider dateAdapter={AdapterMoment}>
                         <DatePicker sx={sx} label="When was the ism recorded?" value={moment(_internalSaying.dateCreated)} />
                     </LocalizationProvider>
+                    <div>
+                        <Tooltip title="Delete this ism">
+                            <IconButton color="error"><DeleteOutline /></IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Submit edits to this ism">
+                            <IconButton color="primary"> <Check /> </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Cancel and close this modal">
+                            <IconButton color="warning" onClick={handleClose}>< Cancel /></IconButton>
+                        </Tooltip>
+
+
+                    </div>
                 </section>
 
             </Dialog>

@@ -49,5 +49,12 @@ namespace Discord.Bot.WebUI.Controllers
         // POST
 
         // DELETE
+        [HttpDelete]
+        [Route("")]
+        public async Task DeleteIsmFromServer(string IsmID)
+        {
+            const jhkjkhj = await _ismsService.GetAllGuildsAsync();
+            throw new Exception();
+        }
     }
 }
