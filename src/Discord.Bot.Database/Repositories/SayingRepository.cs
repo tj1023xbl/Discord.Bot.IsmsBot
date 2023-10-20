@@ -33,12 +33,13 @@ namespace Discord.Bot.Database.Repositories
             });
         }
 
-        public async Task AddIsmAsync(Saying saying)
+        public async Task<Saying> AddIsmAsync(Saying saying)
         {
-            await this.ShieldDb(async (db) =>
+            return await this.ShieldDb(async (db) =>
             {
                 db.Sayings.Add(saying);
                 await db.SaveChangesAsync();
+                return saying;
             });
         }
 
@@ -168,5 +169,14 @@ namespace Discord.Bot.Database.Repositories
             });
         }
 
+        public async Task<int> DeleteIsmAsync(string ismID)
+        {
+            return await this.ShieldDb(async (db) =>
+            {
+                Saying ism = await db.Sayings.FindAsync(ismID);
+                db.Sayings.Remove(ism);
+                return await db.SaveChangesAsync();
+            });
+        }
     }
 }

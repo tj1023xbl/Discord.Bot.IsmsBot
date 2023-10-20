@@ -15,6 +15,8 @@ builder.Services.AddDbContext<AppDBContext>();
 builder.Services.AddScoped((services) => new SayingRepository(services.GetService<AppDBContext>(), databaseSemaphore));
 builder.Services.AddScoped<IsmsService>();
 
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,6 +36,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseCors(opt => opt.WithHeaders(new string[] { "GET", "PUT", "POST", "DELETE", "OPTIONS" }));
+
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

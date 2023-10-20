@@ -10,17 +10,11 @@ namespace Discord.Bot.Database.Models
 {
     public class SayingDTO
     {
-        /// <summary>
-        /// The primary key for this Saying
-        /// </summary>
-        [Key]
-        public Guid Id { get; set; }
 
         /// <summary>
         /// The name of the user containing these isms.
         /// </summary>
         public string IsmKey { get; set; }
-
 
         /// <summary>
         /// The actual ism saying

@@ -1,14 +1,17 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, TextField, CircularProgress } from "@mui/material"
+import { Table, TableBody, TableCell, TableHead, TableRow, TextField, CircularProgress, IconButton } from "@mui/material"
 import { styled } from '@mui/material/styles'
 import styleVariables from '../variables.module.scss'
 import Saying from "../data/models/Saying"
 import { useCallback, useState } from "react";
+import { useSelector } from 'react-redux';
 import styles from './IsmTable.module.scss'
 import moment from 'moment'
 import Adornment from "./Adornment"
 import EditModal from "./edit-modal/EditModal";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import { AddCircleOutline } from "@mui/icons-material";
+import { RootState } from "../data/store/Store";
 
 type Order = 'asc' | 'desc';
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -58,11 +61,12 @@ const StyledFilterInput = styled(TextField, {
 })
 
 
-export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
+export const IsmTable = ({ sayings, loading }: { sayings: Saying[], loading: boolean }) => {
 
     const [filter, setFilter] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
     const [activeSaying, setActiveSaying] = useState<Saying | null>(null)
+    const activeGuildId = useSelector((state: RootState) => state.Guilds.activeGuild?.id)
 
     const openSayingEditModal = (saying: Saying) => {
         setActiveSaying(saying);
@@ -72,7 +76,6 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
     const handleModalClose = () => {
         setActiveSaying(null);
         setModalOpen(false);
-
     }
 
     const handleFilter = useCallback((saying: Saying) => {
@@ -83,22 +86,22 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
 
 
     return (
-        sayings.length > 0 ?
+        !loading && sayings.length > 0 ?
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 {
-                    activeSaying !== null ?
-                        <>
-                            <h1>asdasdasdasd</h1>
-                            < EditModal
-                                isModalOpen={modalOpen}
-                                saying={activeSaying}
-                                handleClose={handleModalClose}
-                                ismKeyList={new Set(sayings.map(s => s.ismKey))}
-                                recorderList={new Set(sayings.map(s => s.ismRecorder))}
-                            />
-                        </> : null
+                    < EditModal
+                        isModalOpen={modalOpen}
+                        saying={activeSaying}
+                        handleClose={handleModalClose}
+                        ismKeyList={new Set(sayings.map(s => s.ismKey))}
+                        recorderList={new Set(sayings.map(s => s.ismRecorder))}
+                        guildId={activeGuildId}
+                    />
                 }
-                <StyledFilterInput InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null, classes: { root: 'root', focused: 'focused', input: 'imput', notchedOutline: 'outline' } }} className={styles.filterTextField} onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined' />
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <StyledFilterInput InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null, classes: { root: 'root', focused: 'focused', input: 'imput', notchedOutline: 'outline' } }} className={styles.filterTextField} onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined' />
+                    <IconButton onClick={() => setModalOpen(true)}><AddCircleOutline style={{ color: "white" }} /></IconButton>
+                </div>
                 <Table className={styles.ismTable}>
                     <TableHead>
                         <TableRow>
@@ -121,9 +124,14 @@ export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
                         })}
                     </TableBody>
                 </Table>
-            </LocalizationProvider> :
+            </LocalizationProvider>
+            :
             <div className={styles.loading} >
                 <CircularProgress size={64} />
             </div>
     )
+}
+
+function UseSelector() {
+    throw new Error("Function not implemented.");
 }

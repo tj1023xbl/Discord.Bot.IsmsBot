@@ -1,5 +1,6 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
-import { GuildSlice, IsmSlice } from './IsmSlice';
+import { GuildSlice } from './GuildSlice';
+import { IsmSlice } from './IsmSlice';
 
 export const store = configureStore({
     reducer: {
@@ -17,3 +18,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<
     unknown,
     Action<string>
 >
+
+export type Status = 'loading' | 'idle' | 'complete' | 'failed';

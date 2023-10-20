@@ -31,7 +31,8 @@ export default function App() {
                 <PillSection />
             </section>
             <section>
-                <IsmTable sayings={sayingsState.value} />
+
+                <IsmTable sayings={sayingsState.value} loading={sayingsState.status === 'loading'} />
             </section>
         </div >
     )

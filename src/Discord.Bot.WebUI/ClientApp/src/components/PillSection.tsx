@@ -1,9 +1,9 @@
 import { Chip, CircularProgress, createTheme, Stack } from '@mui/material'
 import { ThemeProvider } from '@emotion/react';
 import styleVariables from '../variables.module.scss'
-import { getAllGuildsAsyncThunk, Guild, setActiveGuild, Status } from '../data/store/IsmSlice';
+import { getAllGuildsAsyncThunk, Guild, setActiveGuild } from '../data/store/GuildSlice';
 import { useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../data/store/Store';
+import { AppDispatch, RootState, Status } from '../data/store/Store';
 import { useEffect } from 'react';
 
 export const PillSection = () => {

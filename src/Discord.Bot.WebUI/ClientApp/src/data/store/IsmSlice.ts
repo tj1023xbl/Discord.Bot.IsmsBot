@@ -1,40 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import Saying from "../models/Saying";
-import { AppDispatch } from "./Store";
-
-
-export interface Guild {
-    id: string,
-    name: string;
-}
-
-export type Status = 'loading' | 'idle' | 'complete' | 'failed';
+import { Status } from "./Store";
 
 export interface IsmState {
     status: Status;
     error: string | null;
     value: Saying[];
 }
-
-/**
- * Thunk used to pull all guilds from the db via API
- */
-export const getAllGuildsAsyncThunk = createAsyncThunk(
-    'thunks/getAllGuildsAsyncThunk',
-    async (props) => {
-        const url = '/api/Isms/GetAllGuilds';
-        const getAllGuildsResponse = await axios<Guild[]>({
-            method: 'get',
-            url: url,
-            responseType: 'json',
-            headers: {
-                'Content-Type': 'application-json'
-            }
-        });
-        return getAllGuildsResponse.data;
-    }
-)
 
 /**
  * Execute API request to gat all sayings for a server
@@ -54,6 +27,9 @@ const getAllSayingAsync = async (guildId: string) => {
     return getAllSayingsResponse.data
 }
 
+/**
+ * Async thunk that gets all sayings from the API
+ */
 export const getAllSayingsAsyncThunk = createAsyncThunk(
     'thunks/getAllSayingsAsyncThunk',
     async (guildId: string) => {
@@ -61,50 +37,7 @@ export const getAllSayingsAsyncThunk = createAsyncThunk(
     }
 )
 
-export interface GuildState {
-    status: Status;
-    error: string | null;
-    guilds: Guild[];
-    activeGuild: Guild | null;
-}
-
-export const GuildSlice = createSlice({
-    name: 'GuildListSlice',
-    initialState: {
-        status: 'idle',
-        error: null,
-        guilds: [],
-        activeGuild: null
-    } as GuildState,
-    reducers: {
-        setActiveGuild: (state, action) => {
-            return {
-                ...state,
-                activeGuild: action.payload
-            }
-        }
-    },
-    extraReducers: (builder) => {
-        builder.addCase(getAllGuildsAsyncThunk.pending, (state) => {
-            state.status = 'loading';
-            state.error = null;
-            state.guilds = [];
-        });
-        builder.addCase(getAllGuildsAsyncThunk.fulfilled, (state, action: any) => {
-            state.error = null;
-            state.status = 'complete';
-            state.guilds = action.payload;
-            state.activeGuild = action.payload[0];
-        });
-        builder.addCase(getAllGuildsAsyncThunk.rejected, (state, action: any) => {
-            state.error = action.error.message;
-            state.status = 'failed';
-            state.guilds = [];
-        });
-    }
-});
-
-const deleteIsmAPICallAsync = createAsyncThunk(
+export const deleteIsmAPICallAsyncThunk = createAsyncThunk(
     'thunks/deleteIsmAPICallAsync',
     async (saying: Saying) => {
         const url = '/api/Isms/' + saying.id;
@@ -116,9 +49,33 @@ const deleteIsmAPICallAsync = createAsyncThunk(
                 'Content-Type': 'application-json'
             }
         })
-        const blah = await getAllSayingAsync(saying.guildId);
-        return blah;
+        const sayings = await getAllSayingAsync(saying.guildId);
+        return sayings;
     });
+
+export const addNewIsmAPICallAsyncThunk = createAsyncThunk(
+    'thunks/addNewIsmAPICallAsyncThunk',
+    async (saying: Saying) => {
+        const url = 'api/Isms/' + 'addnewism';
+        const response = await axios({
+            url: url,
+            method: 'post',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            data: saying
+        });
+    
+
+            //url, JSON.stringify(saying), {
+            //headers: { "Content-Type": "application-json" }
+
+        //} as AxiosRequestConfig);
+        const sayings = await getAllSayingAsync(saying.guildId);
+        return sayings;
+    }
+)
 
 export const IsmSlice = createSlice({
     name: 'IsmListSlice',
@@ -149,22 +106,35 @@ export const IsmSlice = createSlice({
         });
 
         // DELETE SAYINGS
-        builder.addCase(deleteIsmAPICallAsync.pending, (state) => {
+        builder.addCase(deleteIsmAPICallAsyncThunk.pending, (state) => {
             state.status = 'loading';
             state.error = null;
         });
-        builder.addCase(deleteIsmAPICallAsync.fulfilled, (state, action: any) => {
+        builder.addCase(deleteIsmAPICallAsyncThunk.fulfilled, (state, action: any) => {
             state.error = null;
             state.status = 'complete';
             state.value = action.payload;
         });
-        builder.addCase(deleteIsmAPICallAsync.rejected, (state, action: any) => {
+        builder.addCase(deleteIsmAPICallAsyncThunk.rejected, (state, action: any) => {
             state.error = action.error.message;
             state.status = 'failed';
         });
 
+        // ADD SAYINGS
+        builder.addCase(addNewIsmAPICallAsyncThunk.pending, (state) => {
+            state.status = 'loading';
+            state.error = null;
+        });
+        builder.addCase(addNewIsmAPICallAsyncThunk.fulfilled, (state, action: any) => {
+            state.error = null;
+            state.status = 'complete';
+            state.value = action.payload;
+        });
+        builder.addCase(addNewIsmAPICallAsyncThunk.rejected, (state, action: any) => {
+            state.error = action.error.message;
+            state.status = 'failed';
+        });
 
     }
 })
 
-export const { setActiveGuild } = GuildSlice.actions; 
