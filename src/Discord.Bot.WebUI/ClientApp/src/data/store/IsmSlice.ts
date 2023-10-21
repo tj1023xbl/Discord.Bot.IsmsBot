@@ -52,7 +52,8 @@ export const deleteIsmAPICallAsyncThunk = createAsyncThunk(
         })
         const sayings = await getAllSayingAsync(saying.guildId);
         return sayings;
-    });
+    }
+);
 
 export const addNewIsmAPICallAsyncThunk = createAsyncThunk(
     'thunks/addNewIsmAPICallAsyncThunk',
@@ -68,15 +69,30 @@ export const addNewIsmAPICallAsyncThunk = createAsyncThunk(
             data: saying
         });
     
-
-            //url, JSON.stringify(saying), {
-            //headers: { "Content-Type": "application-json" }
-
-        //} as AxiosRequestConfig);
         const sayings = await getAllSayingAsync(saying.guildId);
         return sayings;
     }
 )
+
+export const editIsmAPICallAsyncThunk = createAsyncThunk(
+    'thunks/editIsmAPICallAsyncThunk',
+    async (saying: Saying) => {
+        const url = 'api/Isms/';
+        const response = await axios({
+            url: url,
+            method: 'put',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            data: saying
+        });
+
+        const sayings = await getAllSayingAsync(saying.guildId);
+        return sayings;
+    }
+)
+
 
 export const IsmSlice = createSlice({
     name: 'IsmListSlice',
@@ -132,6 +148,21 @@ export const IsmSlice = createSlice({
             state.value = action.payload;
         });
         builder.addCase(addNewIsmAPICallAsyncThunk.rejected, (state, action: any) => {
+            state.error = action.error.message;
+            state.status = 'failed';
+        });
+
+        // EDIT SAYINGS
+        builder.addCase(editIsmAPICallAsyncThunk.pending, (state) => {
+            state.status = 'loading';
+            state.error = null;
+        });
+        builder.addCase(editIsmAPICallAsyncThunk.fulfilled, (state, action: any) => {
+            state.error = null;
+            state.status = 'complete';
+            state.value = action.payload;
+        });
+        builder.addCase(editIsmAPICallAsyncThunk.rejected, (state, action: any) => {
             state.error = action.error.message;
             state.status = 'failed';
         });

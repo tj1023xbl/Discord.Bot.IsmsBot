@@ -55,6 +55,21 @@ namespace Discord.Bot.WebUI.Controllers
         }
 
         // PUT
+        [HttpPut("")]
+        public async Task<IActionResult> EditIsmAsync(Saying newIsm)
+        {
+            try
+            {
+                Saying result = await _ismsService.EditIsmAsync(newIsm);
+                return new OkObjectResult(result);
+            }
+            catch (Exception ex)
+            {
+                Log.ForContext("NewIsm", newIsm, true).Error(ex, "An error occurred when trying to add ism '{0}'", newIsm.IsmSaying);
+                return await Task.FromResult(new BadRequestObjectResult(ex.Message));
+            }
+        }
+
 
         // POST
         [HttpPost("addnewism")]

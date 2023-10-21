@@ -46,5 +46,10 @@ namespace Discord.Bot.WebUI.Services
         {
             return await _sayingsRepo.AddIsmAsync(newIsm);
         }
+
+        public async Task<Saying> EditIsmAsync(Saying ism)
+        {
+            return await _sayingsRepo.EditIsmAsync(ism);
+        }
     }
 }

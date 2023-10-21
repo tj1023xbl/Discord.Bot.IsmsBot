@@ -184,5 +184,21 @@ namespace Discord.Bot.Database.Repositories
                 return await db.SaveChangesAsync();
             });
         }
+
+        public async Task<Saying> EditIsmAsync(Saying ism)
+        {
+            return await this.ShieldDb(async (db) =>
+            {
+                var old = await db.Sayings.FindAsync(ism.Id);
+
+                old.IsmSaying = ism.IsmSaying;
+                old.IsmKey = ism.IsmKey;
+                old.IsmRecorder = ism.IsmRecorder;
+                old.DateCreated = ism.DateCreated;
+
+                await db.SaveChangesAsync();
+                return old;
+            });
+        }
     }
 }

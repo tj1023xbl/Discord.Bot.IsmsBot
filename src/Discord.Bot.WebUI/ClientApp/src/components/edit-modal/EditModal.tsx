@@ -9,7 +9,7 @@ import Saying from "../../data/models/Saying";
 import styles from './EditModal.module.scss';
 import moment from "moment";
 import { AppDispatch } from "../../data/store/Store";
-import { addNewIsmAPICallAsyncThunk, deleteIsmAPICallAsyncThunk } from "../../data/store/IsmSlice";
+import { addNewIsmAPICallAsyncThunk, deleteIsmAPICallAsyncThunk, editIsmAPICallAsyncThunk } from "../../data/store/IsmSlice";
 
 const sx = {
     margin: '10px 0 10px 0'
@@ -39,6 +39,13 @@ const EditModal = ({ isModalOpen, saying, handleClose, ismKeyList, recorderList,
     const handleAdd = () => {
         if (_internalSaying) {
             AppDispatch(addNewIsmAPICallAsyncThunk(_internalSaying));
+            handleClose()
+        }
+    }
+
+    const handleEdit = () => {
+        if (_internalSaying) {
+            AppDispatch(editIsmAPICallAsyncThunk(_internalSaying));
             handleClose()
         }
     }
@@ -85,7 +92,7 @@ const EditModal = ({ isModalOpen, saying, handleClose, ismKeyList, recorderList,
 
                         {saying ?
                             <Tooltip title="Submit edits to this ism">
-                                <IconButton color="primary"> <Check /> </IconButton>
+                                <IconButton color="primary" onClick={handleEdit}> <Check /> </IconButton>
                             </Tooltip>
 
                             :
