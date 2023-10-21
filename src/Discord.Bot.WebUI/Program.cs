@@ -1,5 +1,6 @@
 using Discord.Bot.Database;
 using Discord.Bot.Database.Repositories;
+using Discord.Bot.WebUI.Data.JsonConverters;
 using Discord.Bot.WebUI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 SemaphoreSlim databaseSemaphore = new SemaphoreSlim(1, 1);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.Converters.Add(new ULongJsonConverter());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

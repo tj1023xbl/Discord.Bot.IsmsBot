@@ -16,7 +16,7 @@ export interface IsmState {
  */
 const getAllSayingAsync = async (guildId: string) => {
     const url = '/api/Isms/GetAllSayings/' + guildId
-    const getAllSayingsResponse = await axios({
+    const getAllSayingsResponse = await axios<Saying[]>({
         method: 'get',
         url: url,
         responseType: 'json',
@@ -46,7 +46,8 @@ export const deleteIsmAPICallAsyncThunk = createAsyncThunk(
             url: url,
             responseType: 'json',
             headers: {
-                'Content-Type': 'application-json'
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
             }
         })
         const sayings = await getAllSayingAsync(saying.guildId);

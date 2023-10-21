@@ -171,9 +171,15 @@ namespace Discord.Bot.Database.Repositories
 
         public async Task<int> DeleteIsmAsync(string ismID)
         {
+            bool success = Guid.TryParse(ismID, out var guidId);
+            if (!success)
+            {
+                throw new ArgumentException($"Unable to parse the ID '{ismID}' into a GUID.");
+            }
+
             return await this.ShieldDb(async (db) =>
             {
-                Saying ism = await db.Sayings.FindAsync(ismID);
+                Saying ism = await db.Sayings.FindAsync(guidId);
                 db.Sayings.Remove(ism);
                 return await db.SaveChangesAsync();
             });

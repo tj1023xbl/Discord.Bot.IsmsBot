@@ -57,6 +57,7 @@ const EditModal = ({ isModalOpen, saying, handleClose, ismKeyList, recorderList,
                 aria-describedby="modal-modal-description">
 
                 <section className={styles.container}>
+                    <p>GuildID: {guildId}</p>
                     <Autocomplete
                         options={Array.from(ismKeyList)}
                         value={_internalSaying?.ismKey ?? ''}
