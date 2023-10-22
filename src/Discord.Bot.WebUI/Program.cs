@@ -2,6 +2,12 @@ using Discord.Bot.Database;
 using Discord.Bot.Database.Repositories;
 using Discord.Bot.WebUI.Data.JsonConverters;
 using Discord.Bot.WebUI.Services;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Serilog;
+using Serilog.Extensions.Logging;
+
+SetupLogging();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,3 +57,21 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+
+/// <summary>
+/// Sets up logging options.
+/// </summary>
+ void SetupLogging()
+{
+    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "IsmsBotUI", "IsmsBotUILog.log");
+    Log.Logger = Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Verbose()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File(path, rollingInterval: RollingInterval.Month, rollOnFileSizeLimit: true, fileSizeLimitBytes: 1024 * 1024 * 10)
+    .CreateLogger();
+
+    Log.Information("Logs will be stored at {0}", path);
+
+}
