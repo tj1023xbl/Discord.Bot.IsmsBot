@@ -50,7 +50,7 @@ namespace Discord.Bot.WebUI.Controllers
             catch(Exception ex)
             {
                 Log.Error(ex, "An error occurred when getting all sayings from guild {0}", guildId);
-                return await Task.FromResult(new BadRequestObjectResult(new List<Saying>() { }));
+                return new BadRequestObjectResult(new List<Saying>() { });
             }
         }
 
@@ -66,7 +66,7 @@ namespace Discord.Bot.WebUI.Controllers
             catch (Exception ex)
             {
                 Log.ForContext("NewIsm", newIsm, true).Error(ex, "An error occurred when trying to add ism '{0}'", newIsm.IsmSaying);
-                return await Task.FromResult(new BadRequestObjectResult(ex.Message));
+                return new BadRequestObjectResult(ex.Message);
             }
         }
 

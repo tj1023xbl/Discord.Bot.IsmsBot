@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord.Bot.IsmsBot", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord.Bot.Database", "src\Discord.Bot.Database\Discord.Bot.Database.csproj", "{42B4970B-1E1E-4283-BE6B-47E504A52C0A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord.Bot.IsmsBot.Test", "Discord.Bot.IsmsBot.Test\Discord.Bot.IsmsBot.Test.csproj", "{9AC93C73-1F3C-4BB5-9A3F-204C1BB2CC8F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{329790A4-A069-407E-B6BB-A1760A9C222C}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
