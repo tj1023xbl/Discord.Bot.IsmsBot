@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Discord.Bot.Database.Models;
 using Discord.Bot.WebUI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Serilog;
 
 namespace Discord.Bot.WebUI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[Controller]")]
     public class IsmsController : Controller

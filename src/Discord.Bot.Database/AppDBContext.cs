@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using Discord.Bot.Database.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace Discord.Bot.Database
 {
-    public class AppDBContext : DbContext
+    public class AppDBContext : IdentityDbContext<User>
     {
         public DbSet<Saying> Sayings { get; set; }
         public DbSet<Guild> Guilds { get; set; }

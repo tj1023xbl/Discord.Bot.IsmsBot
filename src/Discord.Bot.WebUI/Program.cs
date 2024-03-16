@@ -1,9 +1,10 @@
 using Discord.Bot.Database;
+using Discord.Bot.Database.Models;
 using Discord.Bot.Database.Repositories;
 using Discord.Bot.WebUI.Data.JsonConverters;
 using Discord.Bot.WebUI.Services;
-
 using Serilog;
+using Microsoft.AspNetCore.Identity;
 
 
 SetupLogging();
@@ -24,9 +25,11 @@ builder.Services.AddSwaggerGen();
 
 // DATABASE
 builder.Services.AddDbContext<AppDBContext>();
+builder.Services.AddAuthorization();
 
 // AUTHENTICATION
-// builder.Services.AddAuthentication().AddJwtBearer()
+builder.Services.AddIdentityApiEndpoints<User>()
+    .AddEntityFrameworkStores<AppDBContext>();
 
 // SERVICES
 builder.Services.AddScoped((services) => new SayingRepository(services.GetService<AppDBContext>(), databaseSemaphore));
@@ -57,6 +60,9 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "api/swagger";
     });
 }
+
+// Authorization
+app.MapIdentityApi<User>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

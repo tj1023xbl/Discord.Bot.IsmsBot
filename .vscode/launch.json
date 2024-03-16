@@ -25,6 +25,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
+            "launchBrowser": {
+                "enabled": true
+            },
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/src/Discord.Bot.WebUI/bin/Debug/net7.0/Discord.Bot.WebUI.dll",
             "args": [],
