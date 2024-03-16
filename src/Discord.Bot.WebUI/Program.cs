@@ -2,10 +2,9 @@ using Discord.Bot.Database;
 using Discord.Bot.Database.Repositories;
 using Discord.Bot.WebUI.Data.JsonConverters;
 using Discord.Bot.WebUI.Services;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
+
 using Serilog;
-using Serilog.Extensions.Logging;
+
 
 SetupLogging();
 
@@ -18,10 +17,18 @@ builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.Converters.Add(new ULongJsonConverter());
 });
+
+// SWAGGER
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// DATABASE
 builder.Services.AddDbContext<AppDBContext>();
+
+// AUTHENTICATION
+// builder.Services.AddAuthentication().AddJwtBearer()
+
+// SERVICES
 builder.Services.AddScoped((services) => new SayingRepository(services.GetService<AppDBContext>(), databaseSemaphore));
 builder.Services.AddScoped<IsmsService>();
 
@@ -38,8 +45,17 @@ if (!app.Environment.IsDevelopment())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(c =>
+    {
+        c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
+    });
+
+
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "My Cool API V1");
+        c.RoutePrefix = "api/swagger";
+    });
 }
 
 app.UseHttpsRedirection();

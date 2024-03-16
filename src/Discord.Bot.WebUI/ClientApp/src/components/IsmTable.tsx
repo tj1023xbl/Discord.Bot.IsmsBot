@@ -86,7 +86,12 @@ export const IsmTable = ({ sayings, loading }: { sayings: Saying[], loading: boo
 
 
     return (
-        !loading && sayings.length > 0 ?
+        loading ?
+            <div className={styles.loading} >
+                <CircularProgress size={64} />
+            </div>
+
+            :
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 {
                     < EditModal
@@ -125,10 +130,7 @@ export const IsmTable = ({ sayings, loading }: { sayings: Saying[], loading: boo
                     </TableBody>
                 </Table>
             </LocalizationProvider>
-            :
-            <div className={styles.loading} >
-                <CircularProgress size={64} />
-            </div>
+
     )
 }
 

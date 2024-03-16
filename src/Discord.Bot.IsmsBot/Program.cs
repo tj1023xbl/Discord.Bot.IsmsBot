@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System.IO;
 using Discord.Bot.Database.Repositories;
 using System.Threading;
+using System.Linq;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -73,6 +74,7 @@ namespace Discord.Bot.IsmsBot
                 Log.Verbose("Ensuring the database is created...");
                 dbContext.Database.EnsureCreated();
                 Log.Information("SQLite database created at '{0}'", dbContext.Database.GetConnectionString());
+                Log.Information("User Guilds: [{0}]", string.Join(",", dbContext.Guilds.ToList()));
             }
 
             return serviceProvider;
