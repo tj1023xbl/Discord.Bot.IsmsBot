@@ -29,7 +29,7 @@
                 "enabled": true
             },
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/Discord.Bot.WebUI/bin/Debug/net7.0/Discord.Bot.WebUI.dll",
+            "program": "${workspaceFolder}/src/Discord.Bot.WebUI/bin/Debug/net8.0/Discord.Bot.WebUI.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Discord.Bot.WebUI",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

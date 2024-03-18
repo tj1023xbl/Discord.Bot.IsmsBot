@@ -28,7 +28,7 @@ builder.Services.AddDbContext<AppDBContext>();
 builder.Services.AddAuthorization();
 
 // AUTHENTICATION
-builder.Services.AddIdentityApiEndpoints<User>()
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<AppDBContext>();
 
 // SERVICES
@@ -46,27 +46,16 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger(c =>
-    {
-        c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
-    });
-
-
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "My Cool API V1");
-        c.RoutePrefix = "api/swagger";
-    });
-}
+SetUpSwagger(app);
 
 // Authorization
-app.MapIdentityApi<User>();
+// app.MapGroup("/api/account").MapIdentityApi<IdentityUser>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UsePathBase(new PathString("/api"));
 app.UseRouting();
+app.UseAuthorization();
 
 app.UseCors(opt => opt.WithHeaders(new string[] { "GET", "PUT", "POST", "DELETE", "OPTIONS" }));
 
@@ -84,7 +73,7 @@ app.Run();
 /// <summary>
 /// Sets up logging options.
 /// </summary>
- void SetupLogging()
+void SetupLogging()
 {
     string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "IsmsBotUI", "IsmsBotUILog.log");
     Log.Logger = Log.Logger = new LoggerConfiguration()
@@ -95,5 +84,28 @@ app.Run();
     .CreateLogger();
 
     Log.Information("Logs will be stored at {0}", path);
+
+}
+
+void SetUpSwagger(WebApplication app)
+{
+    string blah = string.Empty;
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger(c =>
+        {
+            c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
+        });
+
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "My Cool API V1");
+            c.RoutePrefix = "api/swagger";
+
+            blah = $"Swagger URLS: {string.Join(",", c.ConfigObject.Urls.Select(u => u.Url))}";
+        });
+
+    }
+    Log.Information("Swagger URLS: {0}", blah);
 
 }

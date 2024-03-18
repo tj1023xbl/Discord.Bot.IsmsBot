@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Discord.Bot.Database.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +14,14 @@ namespace Discord.Bot.Database
         public DbSet<Saying> Sayings { get; set; }
         public DbSet<Guild> Guilds { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             Log.Debug("Configuring database...");
             string datasource = "userSayings.db";
 
             // set the absolute DB path to use
             var specialFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
-            if(string.IsNullOrEmpty(specialFolder))
+            if (string.IsNullOrEmpty(specialFolder))
             {
                 string msg = $"The special folder 'Environment.SpecialFolder.ApplicationData' at '{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}' was not found and was not created.";
                 Log.Error(msg);
@@ -47,8 +48,12 @@ namespace Discord.Bot.Database
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
-        {              
-                
+        {
+            base.OnModelCreating(builder);
+            // Configure the primary key for IdentityUserLogin<string>
+            builder.Entity<IdentityUserLogin<string>>()
+                .HasKey(login => new { login.LoginProvider, login.ProviderKey });
+
         }
 
     }
