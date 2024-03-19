@@ -49,11 +49,10 @@ if (!app.Environment.IsDevelopment())
 SetUpSwagger(app);
 
 // Authorization
-// app.MapGroup("/api/account").MapIdentityApi<IdentityUser>();
+app.MapGroup("/api/account").MapIdentityApi<IdentityUser>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UsePathBase(new PathString("/api"));
 app.UseRouting();
 app.UseAuthorization();
 
