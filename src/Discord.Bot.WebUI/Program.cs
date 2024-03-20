@@ -49,7 +49,13 @@ if (!app.Environment.IsDevelopment())
 SetUpSwagger(app);
 
 // Authorization
-app.MapGroup("/api/account").MapIdentityApi<IdentityUser>();
+app.MapGroup("/api/account").CustomMapIdentityApi<IdentityUser>();
+    app.MapGet("/api/account/register", context =>
+        Task.Run(async () => {context.Response.StatusCode = 504; await context.Response.CompleteAsync();}));
+
+    app.MapPost("/api/account/register", context =>
+        Task.Run(async () => {context.Response.StatusCode = 504; await context.Response.CompleteAsync();}));
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -63,6 +69,7 @@ app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
 
 app.MapFallbackToFile("index.html");
 
