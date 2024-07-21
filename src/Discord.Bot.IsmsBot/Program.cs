@@ -53,15 +53,18 @@ namespace Discord.Bot.IsmsBot
 
         private ServiceProvider ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            SemaphoreSlim databaseSemaphore = new SemaphoreSlim(1, 1); 
+            DiscordSocketClient client = new();
+            InteractionService interaction = new(client);
+            
+            SemaphoreSlim databaseSemaphore = new(1, 1); 
             services.AddSingleton(_config)
                 // Add regex command services
                 .AddScoped<RegexCommandHandler>()
                 .AddScoped<CommandOptions>()
                 .AddScoped<IRegexCommandModuleProvider, RegexCommandModuleProvider>()
-                .AddSingleton<DiscordSocketClient>()
+                .AddSingleton(client)
                 .AddSingleton<CommandService>()
-                .AddSingleton<InteractionService>()
+                .AddSingleton(interaction)
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<IDiscordProxy, DiscordProxy>()
                 .AddSingleton(typeof(IsmsService))
