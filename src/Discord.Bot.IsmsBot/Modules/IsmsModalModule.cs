@@ -1,5 +1,6 @@
 ﻿using Discord.Bot.Database.Models;
 using Discord.Interactions;
+using Serilog;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
@@ -28,18 +29,33 @@ namespace Discord.Bot.IsmsBot
             await Context.Interaction.RespondWithModalAsync(mb.Build());
         }
 
-        [ModalInteraction("add_ism_modal")]
-        public async Task HandleIsmModal(string ism_key, string ism_value, SocketInteractionContext context) 
+        public class IsmModal : IModal
         {
-            if(string.IsNullOrWhiteSpace(ism_key) || string.IsNullOrWhiteSpace(ism_value) || !ism_key.EndsWith("ism", System.StringComparison.InvariantCultureIgnoreCase))
+            public string Title => "Add an Ism!";
+            public string CustomId => "add_ism_modal";
+
+            [InputLabel("Who's Ism?")]
+            [ModalTextInput("ism_key", placeholder: "<user>ism", minLength: 4)]
+            public string IsmKey { get; set; }
+
+            [InputLabel("What did they say?")]
+            [ModalTextInput("ism_value", TextInputStyle.Paragraph, placeholder: "This is where I would put my quote. IF I HAD ONE!", minLength: 4)]
+            public string IsmValue { get; set; }
+        }
+
+        [ModalInteraction("add_ism_modal")]
+        public async Task ModalResponse(IsmModal ismModal)
+        {
+            Log.Debug("Received modal submission with <{0}, {1}>", ismModal.IsmKey, ismModal.IsmValue);
+            if (string.IsNullOrWhiteSpace(ismModal.IsmKey) || string.IsNullOrWhiteSpace(ismModal.IsmValue) || !ismModal.IsmKey.EndsWith("ism", System.StringComparison.OrdinalIgnoreCase))
                 await Context.Channel.SendMessageAsync(ErrorResponses.AddIsmModalError);
 
-            Saying user = await _ismsService.AddIsmAsync(ism_key, ism_value, context.Guild.Id, context.User.Username);
+            Saying saying = await _ismsService.AddIsmAsync(ismModal.IsmKey, ismModal.IsmValue, Context.Guild.Id, Context.User.Username);
 
-            if (user != null)
-                await Context.Channel.SendMessageAsync($"Successfully added new saying for {user.IsmKey}");
+            if (saying != null)
+                await RespondAsync($"Successfully added new saying for {saying.IsmKey}: \"{saying.IsmSaying}\"");
             else
-                await Context.Channel.SendMessageAsync(ErrorResponses.AddIsmModalError);
+                await RespondAsync(ErrorResponses.AddIsmModalError);
         }
 
     }
