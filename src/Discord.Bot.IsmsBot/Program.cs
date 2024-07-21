@@ -14,6 +14,7 @@ using System.IO;
 using Discord.Bot.Database.Repositories;
 using System.Threading;
 using System.Linq;
+using Discord.Interactions;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -60,6 +61,7 @@ namespace Discord.Bot.IsmsBot
                 .AddScoped<IRegexCommandModuleProvider, RegexCommandModuleProvider>()
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<CommandService>()
+                .AddSingleton<InteractionService>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<IDiscordProxy, DiscordProxy>()
                 .AddSingleton(typeof(IsmsService))

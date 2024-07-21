@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.VisualBasic;
 using Discord.Bot.Database.Repositories;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -63,48 +64,66 @@ namespace Discord.Bot.IsmsBot
 
                 string ismKey = match.Groups["ismKey"].Value.ToLower();
                 string ism = match.Groups["ism"].Value;
+
+                saying = await AddIsmAsync(ismKey, ism, discordContext.Guild.Id, discordContext.User.Username);
+            }
+
+            return saying;
+        }
+
+        /// <summary>
+        /// Generic method for adding an ism
+        /// </summary>
+        /// <param name="ismKey"></param>
+        /// <param name="ism"></param>
+        /// <param name="guildId"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<Saying> AddIsmAsync(string ismKey, string ism, ulong guildId, string username) 
+        {
+            Saying saying = null;
+
+            try
+            {
+                // Try to get the userism from the database
+                saying = await _sayingsRepo.GetSayingAsync(ismKey, ism, guildId);
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error getting user saying");
+                throw;
+            }
+
+            // If the saying doesn't exist, create the new userism
+            if (saying == null)
+            {
+                saying = new Saying()
+                {
+                    GuildId = guildId,
+                    IsmKey = ismKey,
+                    DateCreated = DateTime.Now,
+                    IsmRecorder = username,
+                    IsmSaying = ism
+                };
+
+                Log.Debug("Adding new user to database: {0} on server {1}", saying.IsmKey, guildId);
                 try
                 {
-                    // Try to get the userism from the database
-                    saying = await _sayingsRepo.GetSayingAsync(ismKey, ism, discordContext.Guild.Id);
-
+                    await _sayingsRepo.AddIsmAsync(saying);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    Log.Error(ex, "Error getting user saying");
+                    Log.Error(e, "An error occurred while adding an ism.");
                     throw;
                 }
-
-                // If the saying doesn't exist, create the new userism
-                if (saying == null)
-                {
-                    saying = new Saying()
-                    {
-                        GuildId = discordContext.Guild.Id,
-                        IsmKey = ismKey,
-                        DateCreated = DateTime.Now,
-                        IsmRecorder = discordContext.User.Username,
-                        IsmSaying = ism
-                    };
-
-                    Log.Debug("Adding new user to database: {0} on server {1}", saying.IsmKey, discordContext.Guild.Id);
-                    try
-                    {
-                        await _sayingsRepo.AddIsmAsync(saying);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e, "An error occurred while adding an ism.");
-                        throw;
-                    }
-                }
-                else
-                {
-                    // if the saying exists, don't create a new one
-                    Log.Warning("This userism {0} already exists.", ism);
-                    throw new Exception("The userism already exists for that user on this server");
-                }
-
+            }
+            else
+            {
+                // if the saying exists, don't create a new one
+                Log.Warning("This userism {0} already exists.", ism);
+                throw new Exception("The userism already exists for that user on this server");
             }
 
             return saying;
