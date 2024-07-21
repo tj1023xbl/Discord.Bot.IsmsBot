@@ -37,10 +37,7 @@ namespace Discord.Bot.IsmsBot
         {
             _discordClient.MessageReceived += HandleCommandAsync;
             _discordClient.InteractionCreated += HandleInteractionAsync;
-
-            await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
-            await _interactions.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
-            await _interactions.RegisterCommandsGloballyAsync();
+            _discordClient.Ready += ReadyAsync;
 
             _commands.CommandExecuted += async (optional, context, result) =>
             {
@@ -57,6 +54,14 @@ namespace Discord.Bot.IsmsBot
             {
                 Log.Verbose("CommandHandler Module '{0}' initialized.", module.Name);
             }
+        }
+
+        private async Task ReadyAsync()
+        {
+            // Register commands and interactions
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            await _interactions.RegisterCommandsGloballyAsync();
         }
 
         private async Task HandleInteractionAsync(SocketInteraction interaction) 

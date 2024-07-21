@@ -30,14 +30,15 @@ namespace Discord.Bot.IsmsBot
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task RunDiscordApp() 
+        public async Task RunDiscordAppAsync() 
         {
             _disClient.Log += DiscordLogAsync;
 
             await _disClient.LoginAsync(TokenType.Bot, GetToken());
-            await _disClient.StartAsync();
             await _handler.InstallCommandsAsync();
             await _regexCommandHandler.InitializeCommandsAsync();
+
+            await _disClient.StartAsync();
         }
 
         /// <summary>

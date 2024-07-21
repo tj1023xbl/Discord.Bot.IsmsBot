@@ -1,18 +1,11 @@
-﻿using Discord.Bot.Database;
-using Discord.Bot.Database.Models;
+﻿using Discord.Bot.Database.Models;
+using Discord.Bot.Database.Repositories;
 using Discord.Commands;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.VisualBasic;
-using Discord.Bot.Database.Repositories;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Discord.Bot.IsmsBot
 {

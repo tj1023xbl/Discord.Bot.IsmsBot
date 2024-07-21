@@ -12,6 +12,6 @@ namespace Discord.Bot.IsmsBot
         /// 
         /// </summary>
         /// <returns></returns>
-        public Task RunDiscordApp();
+        public Task RunDiscordAppAsync();
     }
 }
