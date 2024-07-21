@@ -6,6 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.VisualBasic;
+using Discord.Bot.Database.Repositories;
 
 namespace Discord.Bot.IsmsBot
 {
