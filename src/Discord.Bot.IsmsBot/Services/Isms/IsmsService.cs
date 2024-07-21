@@ -12,7 +12,6 @@ using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.VisualBasic;
 using Discord.Bot.Database.Repositories;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Discord.Bot.IsmsBot
 {
