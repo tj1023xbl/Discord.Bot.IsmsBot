@@ -12,7 +12,14 @@ using Microsoft.EntityFrameworkCore;
 
 public class SeedData
 {
-    public static async void Initialize(IServiceProvider serviceProvider)
+    /// <summary>
+    /// Seed the database with admin user and credentials.
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <param name="secret">Plain-text password for the admin user.</param>
+    /// <exception cref="ApplicationException">Unable to seed database with new user</exception>
+    /// <exception cref="Exception">Something went wrong while saving the roles to the new user.</exception>
+    public static async void Initialize(IServiceProvider serviceProvider, string secret)
     {
         Log.Verbose("Initializing the seed data...");
         AppDBContext context = serviceProvider.GetService<AppDBContext>();
@@ -45,7 +52,6 @@ public class SeedData
 
             Log.Verbose("No users exist, creating admin user.");
             var passwordHasher = new PasswordHasher<IdentityUser>();
-            string secret = "AdminPassword123!";
             var hashedPassword = passwordHasher.HashPassword(identityUser, secret);
             identityUser.PasswordHash = hashedPassword;
 
