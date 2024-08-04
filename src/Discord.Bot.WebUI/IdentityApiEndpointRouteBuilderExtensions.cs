@@ -55,10 +55,10 @@ public static class IdentityApiEndpointRouteBuilderExtensions
         var routeGroup = endpoints.MapGroup("");
 
         // I don't want to support random people registering on the app
-        routeGroup.MapPost("/register", Task<ForbidHttpResult>
+        routeGroup.MapPost("/register", Task<Microsoft.AspNetCore.Http.HttpResults.StatusCodeHttpResult>
             ([FromBody] RegisterRequest registration, HttpContext context, [FromServices] IServiceProvider sp) =>
         {
-            return Task.FromResult(TypedResults.Forbid());
+            return Task.FromResult(TypedResults.StatusCode(StatusCodes.Status501NotImplemented));
         });
 
         routeGroup.MapPost("/login", async Task<Results<Ok<AccessTokenResponse>, EmptyHttpResult, ProblemHttpResult>>

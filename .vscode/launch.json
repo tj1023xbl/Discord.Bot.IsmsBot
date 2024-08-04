@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/Discord.Bot.IsmsBot/bin/Debug/net7.0/Discord.Bot.IsmsBot.dll",
+            "program": "${workspaceFolder}/src/Discord.Bot.IsmsBot/bin/Debug/net8.0/Discord.Bot.IsmsBot.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Discord.Bot.IsmsBot",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -26,7 +26,8 @@
             "request": "launch",
             "preLaunchTask": "build",
             "launchBrowser": {
-                "enabled": true
+                "enabled": false,
+                
             },
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/src/Discord.Bot.WebUI/bin/Debug/net8.0/Discord.Bot.WebUI.dll",
@@ -35,7 +36,27 @@
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
             "stopAtEntry": false,
-            "requireExactSource":false
+        },
+        {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "name": ".NET Core Launch (Swagger)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "launchBrowser": {
+                "enabled": false,
+                "args": "${auto-detect-url}/api/swagger"
+            },
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/Discord.Bot.WebUI/bin/Debug/net8.0/Discord.Bot.WebUI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Discord.Bot.WebUI",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "internalConsole",
+            "stopAtEntry": false,
+
         },
         {
             "name": ".NET Core Attach",

@@ -9,7 +9,7 @@ using Serilog;
 
 namespace Discord.Bot.Database
 {
-    public class AppDBContext : IdentityDbContext<User>
+    public class AppDBContext : IdentityDbContext<IdentityUser>
     {
         public DbSet<Saying> Sayings { get; set; }
         public DbSet<Guild> Guilds { get; set; }
