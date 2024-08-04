@@ -5,7 +5,7 @@ import { AppDispatch, Status } from "./Store";
 export const GetAuthenticationStatusAsyncThunk = createAsyncThunk(
     'thunks/GetAuthenticationStatusAsyncThunk',
     async (props) => {
-        const url = '/api/account/info';
+        const url = '/api/account/manage/info';
         const authResponse = await axios<string>({
             method: 'get',
             url: url,
@@ -47,16 +47,15 @@ export const AuthSlice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(GetAuthenticationStatusAsyncThunk.pending, (state) => {
-            state.error = null,
-            state.authStatus = AuthStatus.unauthorized,
+            state.error = null
+            state.authStatus = AuthStatus.unauthorized
             state.requestStatus = 'loading'
         });
 
         builder.addCase(GetAuthenticationStatusAsyncThunk.fulfilled, (state, action: any) => {
-            state.error = null,
+            state.error = null
             state.authStatus = action.payload as AuthStatus
             state.requestStatus = 'complete'
-
         });
 
         builder.addCase(GetAuthenticationStatusAsyncThunk.rejected, (state, action: any) => {
