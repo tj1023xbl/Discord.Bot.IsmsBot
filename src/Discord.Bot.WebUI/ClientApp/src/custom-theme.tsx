@@ -13,6 +13,9 @@ const customTheme = createTheme({
     },
     components: {
         MuiContainer: {
+            defaultProps: {
+                maxWidth: false
+            },
             styleOverrides: {
                 root: {
                         backgroundColor: `${styleVariables.background_dark}`,

@@ -27,7 +27,7 @@ export const GetAuthenticationStatusAsyncThunk = createAsyncThunk(
 export const LoginAsyncThunk = createAsyncThunk(
     'thunks/GetAuthenticationStatusAsyncThunk',
     async ({email, password}: {email: string, password: string}) => {
-        const url = '/api/account/login?useCookies=true&useSessionCookies=true';
+        const url = '/api/account/login';
         const authResponse = await axios<string>({
             method: 'post',
             url: url,
