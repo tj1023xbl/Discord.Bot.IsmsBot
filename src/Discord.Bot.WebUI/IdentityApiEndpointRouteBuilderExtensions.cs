@@ -61,6 +61,8 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             return Task.FromResult(TypedResults.StatusCode(StatusCodes.Status501NotImplemented));
         });
 
+        // routeGroup.MapPost("/checkstatus", async Task<ContentHttpResult> ([FromHeader]) => {});
+
         routeGroup.MapPost("/login", async Task<Results<Ok<AccessTokenResponse>, EmptyHttpResult, ProblemHttpResult>>
             ([FromBody] LoginRequest login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies, [FromServices] IServiceProvider sp) =>
         {
