@@ -1,6 +1,6 @@
 import { Modal } from "@mui/base";
 import { AddBoxRounded, ArrowRight, Cancel, Check, CheckBox, DateRange, DeleteOutline, Edit, Publish } from "@mui/icons-material";
-import { Autocomplete, Button, Dialog, Icon, IconButton, Popover, TextField, Tooltip } from "@mui/material";
+import { Autocomplete, Button, Dialog, Icon, IconButton, Popover, TextField, Tooltip, Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -64,7 +64,6 @@ const EditModal = ({ isModalOpen, saying, handleClose, ismKeyList, recorderList,
                 aria-describedby="modal-modal-description">
 
                 <section className={styles.container}>
-                    <p>GuildID: {guildId}</p>
                     <Autocomplete
                         options={Array.from(ismKeyList)}
                         value={_internalSaying?.ismKey ?? ''}
@@ -92,13 +91,13 @@ const EditModal = ({ isModalOpen, saying, handleClose, ismKeyList, recorderList,
 
                         {saying ?
                             <Tooltip title="Submit edits to this ism">
-                                <IconButton color="primary" onClick={handleEdit}> <Check /> </IconButton>
+                                <IconButton color="success" onClick={handleEdit}> <Check /> </IconButton>
                             </Tooltip>
 
                             :
 
                             <Tooltip title="Add a new saying">
-                                <IconButton color="primary" onClick={handleAdd}> <Publish /> </IconButton>
+                                <IconButton color="success" onClick={handleAdd}> <Publish /> </IconButton>
                             </Tooltip>
                         }
                         <Tooltip title="Cancel and close this modal">

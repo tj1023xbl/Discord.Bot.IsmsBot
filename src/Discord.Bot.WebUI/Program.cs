@@ -50,12 +50,6 @@ SetUpSwagger(app);
 
 // Authorization
 app.MapGroup("/api/account").CustomMapIdentityApi<IdentityUser>();
-    app.MapGet("/api/account/register", context =>
-        Task.Run(async () => {context.Response.StatusCode = 504; await context.Response.CompleteAsync();}));
-
-    app.MapPost("/api/account/register", context =>
-        Task.Run(async () => {context.Response.StatusCode = 504; await context.Response.CompleteAsync();}));
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -105,7 +99,7 @@ void SetUpSwagger(WebApplication app)
 
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "My Cool API V1");
+            c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Isms Bot");
             c.RoutePrefix = "api/swagger";
 
             blah = $"Swagger URLS: {string.Join(",", c.ConfigObject.Urls.Select(u => u.Url))}";

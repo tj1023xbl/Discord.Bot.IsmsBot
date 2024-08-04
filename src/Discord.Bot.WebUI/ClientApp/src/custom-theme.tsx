@@ -1,8 +1,39 @@
-import { createTheme, iconButtonClasses, inputBaseClasses, outlinedInputClasses, typographyClasses } from "@mui/material";
+import { colors, createTheme, iconButtonClasses, inputBaseClasses, outlinedInputClasses, typographyClasses } from "@mui/material";
 import styleVariables from './variables.module.scss'
 
 const customTheme = createTheme({
+    palette: {
+        primary: colors.yellow,
+        background: {
+            paper: `${styleVariables.background_dark}`
+        },
+        text: {
+            primary: '#fff'
+        }
+    },
     components: {
+        MuiContainer: {
+            defaultProps: {
+                maxWidth: false
+            },
+            styleOverrides: {
+                root: {
+                        backgroundColor: `${styleVariables.background_dark}`,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        flex: '1',
+                        padding: '0 20px',
+                        color: 'whitesmoke',
+                    
+                        [`& section:first-of-type`]: {
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                            
+                        }
+                    }                
+            }
+        },
         MuiTypography: {
             styleOverrides: {
                 root: {
@@ -85,15 +116,6 @@ const customTheme = createTheme({
                 }
             }
         },
-        MuiButtonBase: {
-            styleOverrides: {
-                root: {
-                    [`&.${iconButtonClasses.root}`]: {
-                        color: 'red'
-                    }
-                }
-            }
-        }
     }
 })
 export default customTheme;

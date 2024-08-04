@@ -6,7 +6,11 @@ import { IsmTable } from './components/IsmTable';
 import { PillSection } from './components/PillSection';
 import { getAllSayingsAsyncThunk } from './data/store/IsmSlice';
 import { AppDispatch, RootState } from './data/store/Store';
-import customTheme from './custom-theme'
+import { AuthStatus } from './data/store/AuthSlice';
+import { Login } from './components/Login';
+import { AuthGuard } from './components/AuthGuard';
+import { Container } from '@mui/material';
+import customTheme from './custom-theme';
 
 /**
  * Homepage
@@ -14,27 +18,32 @@ import customTheme from './custom-theme'
  */
 export default function App() {
     const activeGuild = useSelector((state: RootState) => state.Guilds.activeGuild);
-    const sayingsState = useSelector((state: RootState) => state.Isms)
+    const sayingsState = useSelector((state: RootState) => state.Isms);
 
     useEffect(() => {
         if (activeGuild) {
             // Grab all the isms to display them in a table
             AppDispatch(getAllSayingsAsyncThunk(activeGuild.id))
         }
-    }, [activeGuild])
+    }, [activeGuild?.id])
 
     return (
+        <ThemeProvider theme={customTheme}>
 
-        <div className={styles.container}>
-            <section>
-                <h1 className={styles.intro}>Isms Bot</h1>
-                <PillSection />
-            </section>
-            <section>
+            <AuthGuard>
 
-                <IsmTable sayings={sayingsState.value} loading={sayingsState.status === 'loading'} />
-            </section>
-        </div >
+                <Container>
+                    <section>
+                        <h1 className={styles.intro}>Isms Bot</h1>
+                        <PillSection />
+                    </section>
+                    <section>
+                        <IsmTable sayings={sayingsState.value} loading={sayingsState.status === 'loading'} />
+                    </section>
+                </Container>
+
+            </AuthGuard>
+        </ThemeProvider>
     )
 }
 

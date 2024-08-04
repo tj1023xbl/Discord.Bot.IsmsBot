@@ -55,19 +55,19 @@ public static class IdentityApiEndpointRouteBuilderExtensions
         var routeGroup = endpoints.MapGroup("");
 
         // I don't want to support random people registering on the app
-        routeGroup.MapPost("/register", Task<ForbidHttpResult>
+        routeGroup.MapPost("/register", Task<Microsoft.AspNetCore.Http.HttpResults.StatusCodeHttpResult>
             ([FromBody] RegisterRequest registration, HttpContext context, [FromServices] IServiceProvider sp) =>
         {
-            return Task.FromResult(TypedResults.Forbid());
+            return Task.FromResult(TypedResults.StatusCode(StatusCodes.Status501NotImplemented));
         });
 
         routeGroup.MapPost("/login", async Task<Results<Ok<AccessTokenResponse>, EmptyHttpResult, ProblemHttpResult>>
-            ([FromBody] LoginRequest login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies, [FromServices] IServiceProvider sp) =>
+            ([FromBody] LoginRequest login, [FromServices] IServiceProvider sp) =>
         {
             var signInManager = sp.GetRequiredService<SignInManager<TUser>>();
 
-            var useCookieScheme = (useCookies == true) || (useSessionCookies == true);
-            var isPersistent = (useCookies == true) && (useSessionCookies != true);
+            var useCookieScheme = true;
+            var isPersistent = false;
             signInManager.AuthenticationScheme = useCookieScheme ? IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
 
             var result = await signInManager.PasswordSignInAsync(login.Email, login.Password, isPersistent, lockoutOnFailure: true);
@@ -92,6 +92,15 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             // The signInManager already produced the needed response in the form of a cookie or bearer token.
             return TypedResults.Empty;
         });
+
+        routeGroup.MapGet("/logout", async Task<Results<Ok, ProblemHttpResult>>
+            ([FromServices] IServiceProvider sp) =>
+        {
+            var signInManager = sp.GetRequiredService<SignInManager<TUser>>();
+            await signInManager.SignOutAsync();
+            return TypedResults.Ok();
+        });
+
 
         routeGroup.MapPost("/refresh", async Task<Results<Ok<AccessTokenResponse>, UnauthorizedHttpResult, SignInHttpResult, ChallengeHttpResult>>
             ([FromBody] RefreshRequest refreshRequest, [FromServices] IServiceProvider sp) =>
