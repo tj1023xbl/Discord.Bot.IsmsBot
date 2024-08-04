@@ -3,6 +3,7 @@ import { AuthSlice, AuthStatus, GetAuthenticationStatusAsyncThunk } from '../dat
 import { AppDispatch, RootState, Status } from '../data/store/Store';
 import { Login } from './Login';
 import { useEffect } from 'react';
+import { Container } from '@mui/material';
 
 export const AuthGuard = ({ children }: { children: any }) => {
 
@@ -20,12 +21,12 @@ export const AuthGuard = ({ children }: { children: any }) => {
         {
             authStatus === AuthStatus.unauthorized ?
                 (
-                    <div>
+                    <Container>
                         <h1>test: {test}</h1>
                         <h1>request status: {requestStatus} </h1>
                         <h1>auth status: {authStatus}</h1>
                         <Login />
-                    </div>
+                    </Container>
                 )
                 : (children)
         }

@@ -8,7 +8,7 @@ const customTheme = createTheme({
             paper: `${styleVariables.background_dark}`
         },
         text: {
-            primary: 'whitesmoke'
+            primary: '#fff'
         }
     },
     components: {

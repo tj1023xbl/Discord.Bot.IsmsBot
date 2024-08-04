@@ -11,7 +11,7 @@ export const GetAuthenticationStatusAsyncThunk = createAsyncThunk(
             url: url,
             responseType: 'json',
             headers: {
-                'Content-Type': 'application-json'
+                'Content-Type': 'application/json'
             }
         });
         if (authResponse.status === HttpStatusCode.Ok){
@@ -22,6 +22,26 @@ export const GetAuthenticationStatusAsyncThunk = createAsyncThunk(
         }
     }
 
+)
+
+export const LoginAsyncThunk = createAsyncThunk(
+    'thunks/GetAuthenticationStatusAsyncThunk',
+    async ({email, password}: {email: string, password: string}) => {
+        const url = '/api/account/login?useCookies=true&useSessionCookies=true';
+        const authResponse = await axios<string>({
+            method: 'post',
+            url: url,
+            responseType: 'json',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: {
+                email: email,
+                password: password
+            }
+        });
+        console.log(authResponse);
+    }
 )
 
 export interface AuthState {

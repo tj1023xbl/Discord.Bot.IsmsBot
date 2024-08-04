@@ -14,23 +14,26 @@ import Container from '@mui/material/Container';
 import { ThemeProvider } from '@mui/material/styles';
 import customTheme from '../custom-theme';
 import styles from '../App.module.scss';
+import { AppDispatch } from '../data/store/Store';
+import { LoginAsyncThunk } from '../data/store/AuthSlice';
 
 
 
 export const Login = () => {
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    
+    AppDispatch(LoginAsyncThunk({email: data.get('email') as string, password: data.get('password') as string}));
+    
   };
 
   return (
-    <ThemeProvider theme={customTheme}>
-      <Container component="main" maxWidth="xs">
+      <div>
         <CssBaseline />
+        <center>
+
         <Box
           sx={{
             marginTop: 8,
@@ -78,7 +81,8 @@ export const Login = () => {
             </Grid>
           </Box>
         </Box>
-      </Container>
-    </ThemeProvider>
+        </center>
+
+      </div>
   );
 }
