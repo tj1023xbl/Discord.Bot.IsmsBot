@@ -1,6 +1,6 @@
 ### CONTEXT AT PROJECTS FOLDER ###
 # Build the dotnet api
-FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine3.18 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine3.18 AS base
 EXPOSE 8080
 WORKDIR /app
 ENV IS_DOCKER TRUE
@@ -10,7 +10,7 @@ RUN apk update  \
 
 
 # DOTNET API
-FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine3.18 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine3.18 AS builder
 WORKDIR /app/dotnet
 COPY . .
 RUN ls

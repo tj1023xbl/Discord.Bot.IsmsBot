@@ -25,7 +25,7 @@ export const GetAuthenticationStatusAsyncThunk = createAsyncThunk(
 )
 
 export const LoginAsyncThunk = createAsyncThunk(
-    'thunks/GetAuthenticationStatusAsyncThunk',
+    'thunks/LoginAsyncThunk',
     async ({email, password}: {email: string, password: string}) => {
         const url = '/api/account/login';
         const authResponse = await axios<string>({
@@ -40,7 +40,8 @@ export const LoginAsyncThunk = createAsyncThunk(
                 password: password
             }
         });
-        console.log(authResponse);
+
+        return authResponse;
     }
 )
 
