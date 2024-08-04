@@ -9,6 +9,8 @@ import { AppDispatch, RootState } from './data/store/Store';
 import { AuthStatus } from './data/store/AuthSlice';
 import { Login } from './components/Login';
 import { AuthGuard } from './components/AuthGuard';
+import { Container } from '@mui/material';
+import customTheme from './custom-theme';
 
 /**
  * Homepage
@@ -26,19 +28,22 @@ export default function App() {
     }, [activeGuild?.id])
 
     return (
-        <AuthGuard>
+        <ThemeProvider theme={customTheme}>
 
-            <div className={styles.container}>
-                <section>
-                    <h1 className={styles.intro}>Isms Bot</h1>
-                    <PillSection />
-                </section>
-                <section>
-                    <IsmTable sayings={sayingsState.value} loading={sayingsState.status === 'loading'} />
-                </section>
-            </div>
+            <AuthGuard>
 
-        </AuthGuard>
+                <Container>
+                    <section>
+                        <h1 className={styles.intro}>Isms Bot</h1>
+                        <PillSection />
+                    </section>
+                    <section>
+                        <IsmTable sayings={sayingsState.value} loading={sayingsState.status === 'loading'} />
+                    </section>
+                </Container>
+
+            </AuthGuard>
+        </ThemeProvider>
     )
 }
 
