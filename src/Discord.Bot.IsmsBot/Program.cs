@@ -14,6 +14,7 @@ using System.IO;
 using Discord.Bot.Database.Repositories;
 using System.Threading;
 using System.Linq;
+using Discord.Interactions;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -52,14 +53,24 @@ namespace Discord.Bot.IsmsBot
 
         private ServiceProvider ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            SemaphoreSlim databaseSemaphore = new SemaphoreSlim(1, 1); 
+            DiscordSocketClient client = new(
+                new DiscordSocketConfig()
+                {
+                    GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent,
+                    LogLevel = LogSeverity.Verbose
+                }
+            );
+            InteractionService interaction = new(client);
+
+            SemaphoreSlim databaseSemaphore = new(1, 1);
             services.AddSingleton(_config)
                 // Add regex command services
                 .AddScoped<RegexCommandHandler>()
                 .AddScoped<CommandOptions>()
                 .AddScoped<IRegexCommandModuleProvider, RegexCommandModuleProvider>()
-                .AddSingleton<DiscordSocketClient>()
+                .AddSingleton(client)
                 .AddSingleton<CommandService>()
+                .AddSingleton(interaction)
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<IDiscordProxy, DiscordProxy>()
                 .AddSingleton(typeof(IsmsService))

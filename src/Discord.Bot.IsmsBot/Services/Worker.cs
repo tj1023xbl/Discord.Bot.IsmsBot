@@ -25,7 +25,7 @@ namespace Discord.Bot.IsmsBot.Services
             Log.Information("Starting the Isms Bot...");
             try
             {
-                await _discordProxy.RunDiscordApp();
+                await _discordProxy.RunDiscordAppAsync();
             }
             catch (Exception e)
             {

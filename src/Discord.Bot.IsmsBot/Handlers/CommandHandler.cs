@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using Serilog;
 using System;
@@ -14,25 +15,29 @@ namespace Discord.Bot.IsmsBot
     {
         private readonly DiscordSocketClient _discordClient;
         private readonly CommandService _commands;
-        private readonly IServiceProvider _servicecs;
+        private readonly InteractionService _interactions;
+        private readonly IServiceProvider _services;
 
         /// <summary>
-        /// Constructor
+        /// C'tor
         /// </summary>
         /// <param name="client"></param>
         /// <param name="commands"></param>
-        public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services)
+        /// <param name="interactions"></param>
+        /// <param name="services"></param>
+        public CommandHandler(DiscordSocketClient client, CommandService commands, InteractionService interactions, IServiceProvider services)
         {
             _discordClient = client;
             _commands = commands;
-            _servicecs = services;
+            _interactions = interactions;
+            _services = services;
         }
 
         public async Task InstallCommandsAsync()
         {
             _discordClient.MessageReceived += HandleCommandAsync;
-
-            await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _servicecs);
+            _discordClient.InteractionCreated += HandleInteractionAsync;
+            _discordClient.Ready += ReadyAsync;
 
             _commands.CommandExecuted += async (optional, context, result) =>
             {
@@ -49,6 +54,20 @@ namespace Discord.Bot.IsmsBot
             {
                 Log.Verbose("CommandHandler Module '{0}' initialized.", module.Name);
             }
+        }
+
+        private async Task ReadyAsync()
+        {
+            // Register commands and interactions
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            await _interactions.RegisterCommandsGloballyAsync();
+        }
+
+        private async Task HandleInteractionAsync(SocketInteraction interaction) 
+        {
+            var context = new SocketInteractionContext(_discordClient, interaction);
+            await _interactions.ExecuteCommandAsync(context, _services);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -78,7 +97,7 @@ namespace Discord.Bot.IsmsBot
             await _commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
-                services: _servicecs);
+                services: _services);
         }
     }
 }

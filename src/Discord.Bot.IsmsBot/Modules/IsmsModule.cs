@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Discord.Bot.Database.Models;
+using Discord.Commands;
+using IsmsBot.RegexCommand;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Discord.Bot.Database.Models;
-using IsmsBot.RegexCommand;
-using Discord.Commands;
-using Discord.WebSocket;
-using Serilog;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Discord.Bot.IsmsBot
 {
