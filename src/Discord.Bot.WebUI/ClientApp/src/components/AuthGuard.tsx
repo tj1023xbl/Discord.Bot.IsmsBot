@@ -2,21 +2,13 @@ import { useSelector } from 'react-redux';
 import { AuthStatus, GetAuthenticationStatusAsyncThunk } from '../data/store/AuthSlice';
 import { AppDispatch, RootState, Status } from '../data/store/Store';
 import { Login } from './Login';
-import { useCallback, useEffect } from 'react';
-import { CircularProgress, Container } from '@mui/material';
+import { useEffect } from 'react';
+import { Container } from '@mui/material';
+import { setLoadingState } from '../data/store/LoadingSlice';
 
 
 const loading = (status: Status, authStatus: AuthStatus, children: any) => {
-    if (status === 'loading') {
-        return (
-            <Container>
-                <center>
-                    <CircularProgress size={100} />
-                </center>
-            </Container>
-        )
-    }
-    else if (authStatus === AuthStatus.unauthorized) {
+    if (authStatus === AuthStatus.unauthorized) {
         return (
             <Container>
                 <Login />

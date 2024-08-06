@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import Saying from "../models/Saying";
 import { Status } from "./Store";
 

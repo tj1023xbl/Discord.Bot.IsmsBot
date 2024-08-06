@@ -56,23 +56,14 @@ export const PillSection = () => {
     })
 
     return (
-        <>
-            {
-                guildsStatus === 'loading' ?
-                    (
-                        <CircularProgress />
-                    )
-                    :
-                    (
-                        <Stack direction="row" spacing={1}>
-                            <ThemeProvider theme={customTheme}>
-                                {guilds.map((guild) => {
-                                    return <Chip onClick={() => handleClick(guild)} label={guild.name} key={guild.id} variant={guild.id === activeGuild?.id ? 'filled' : 'outlined'} ></Chip>
-                                })}
-                            </ThemeProvider>
-                        </Stack>
-                    )
-            }
-        </>
+
+        <Stack direction="row" spacing={1}>
+            <ThemeProvider theme={customTheme}>
+                {guilds.map((guild) => {
+                    return <Chip onClick={() => handleClick(guild)} label={guild.name} key={guild.id} variant={guild.id === activeGuild?.id ? 'filled' : 'outlined'} ></Chip>
+                })}
+            </ThemeProvider>
+        </Stack>
+
     )
 }

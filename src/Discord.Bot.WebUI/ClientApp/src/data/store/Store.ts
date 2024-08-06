@@ -2,12 +2,14 @@ import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import { GuildSlice } from './GuildSlice';
 import { IsmSlice } from './IsmSlice';
 import { AuthSlice } from './AuthSlice';
+import { LoadingSlice } from './LoadingSlice';
 
 export const store = configureStore({
     reducer: {
         Isms: IsmSlice.reducer,
         Guilds: GuildSlice.reducer,
-        AuthState: AuthSlice.reducer
+        AuthState: AuthSlice.reducer,
+        LoadingState: LoadingSlice.reducer
     }
 })
 

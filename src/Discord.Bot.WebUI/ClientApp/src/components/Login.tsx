@@ -26,8 +26,6 @@ export const Login = () => {
 
     return (
         <div>
-            authStatus: {test.authStatus}
-            requestStatus: {test.requestStatus}
             <CssBaseline />
             <center>
 

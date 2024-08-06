@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, TextField, CircularProgress, IconButton } from "@mui/material"
+import { Table, TableBody, TableCell, TableHead, TableRow, TextField, IconButton } from "@mui/material"
 import { styled } from '@mui/material/styles'
 import styleVariables from '../variables.module.scss'
 import Saying from "../data/models/Saying"
@@ -35,7 +35,6 @@ function getComparator<Key extends keyof any>(
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
-
 
 const StyledFilterInput = styled(TextField, {
     shouldForwardProp: () => true,
@@ -84,56 +83,48 @@ export const IsmTable = ({ sayings, loading }: { sayings: Saying[], loading: boo
             saying.ismSaying.toLowerCase().includes(filter.toLowerCase())
     }, [filter])
 
-
     return (
-        loading ?
-            <div className={styles.loading} >
-                <CircularProgress size={64} />
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+            {
+                < EditModal
+                    isModalOpen={modalOpen}
+                    saying={activeSaying}
+                    handleClose={handleModalClose}
+                    ismKeyList={new Set(sayings.map(s => s.ismKey))}
+                    recorderList={new Set(sayings.map(s => s.ismRecorder))}
+                    guildId={activeGuildId}
+                />
+            }
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <StyledFilterInput InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null, classes: { root: 'root', focused: 'focused', input: 'imput', notchedOutline: 'outline' } }} className={styles.filterTextField} onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined' />
+                <IconButton onClick={() => setModalOpen(true)}><AddCircleOutline style={{ color: "white" }} /></IconButton>
             </div>
-
-            :
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-                {
-                    < EditModal
-                        isModalOpen={modalOpen}
-                        saying={activeSaying}
-                        handleClose={handleModalClose}
-                        ismKeyList={new Set(sayings.map(s => s.ismKey))}
-                        recorderList={new Set(sayings.map(s => s.ismRecorder))}
-                        guildId={activeGuildId}
-                    />
-                }
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <StyledFilterInput InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null, classes: { root: 'root', focused: 'focused', input: 'imput', notchedOutline: 'outline' } }} className={styles.filterTextField} onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined' />
-                    <IconButton onClick={() => setModalOpen(true)}><AddCircleOutline style={{ color: "white" }} /></IconButton>
-                </div>
-                <Table className={styles.ismTable}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Saying</TableCell>
-                            <TableCell>Key</TableCell>
-                            <TableCell>DateTime</TableCell>
-                            <TableCell>Recorder</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {sayings.filter(handleFilter).map((saying) => {
-                            return (
-                                <TableRow key={saying.id} onClick={() => openSayingEditModal(saying)} style={{ cursor: 'pointer' }}>
-                                    <TableCell>{saying.ismSaying}</TableCell>
-                                    <TableCell>{saying.ismKey}</TableCell>
-                                    <TableCell className={styles.date}>{moment(saying.dateCreated).format("MMM Do 'YY")}</TableCell>
-                                    <TableCell>{saying.ismRecorder}</TableCell>
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </LocalizationProvider>
+            <Table className={styles.ismTable}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Saying</TableCell>
+                        <TableCell>Key</TableCell>
+                        <TableCell>DateTime</TableCell>
+                        <TableCell>Recorder</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {sayings.filter(handleFilter).map((saying) => {
+                        return (
+                            <TableRow key={saying.id} onClick={() => openSayingEditModal(saying)} style={{ cursor: 'pointer' }}>
+                                <TableCell>{saying.ismSaying}</TableCell>
+                                <TableCell>{saying.ismKey}</TableCell>
+                                <TableCell className={styles.date}>{moment(saying.dateCreated).format("MMM Do 'YY")}</TableCell>
+                                <TableCell>{saying.ismRecorder}</TableCell>
+                            </TableRow>
+                        )
+                    })}
+                </TableBody>
+            </Table>
+        </LocalizationProvider>
 
     )
+
 }
 
-function UseSelector() {
-    throw new Error("Function not implemented.");
-}
+
