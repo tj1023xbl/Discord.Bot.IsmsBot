@@ -3,7 +3,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine3.18 AS base
 EXPOSE 8080
 WORKDIR /app
-ENV IS_DOCKER TRUE
+ENV IS_DOCKER=TRUE
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 RUN apk update  \
 	&& apk add icu
@@ -13,12 +13,13 @@ RUN apk update  \
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine3.18 AS builder
 WORKDIR /app/dotnet
 COPY . .
+RUN pwd
 RUN ls
 RUN dotnet restore ./Discord.Bot.WebUI
 RUN dotnet build ./Discord.Bot.WebUI -c release -o /app/dotnet/build --property WarningLevel=0
 RUN dotnet dev-certs https 
 
-FROM builder as publish
+FROM builder AS publish
 # install deps
 RUN apk update \
 	&& apk upgrade \
@@ -27,7 +28,7 @@ RUN apk update \
 
 RUN dotnet publish ./Discord.Bot.WebUI -c release -o /app/dotnet/publish --property WarningLevel=0
 
-FROM base as final
+FROM base AS final
 WORKDIR /app/dotnet
 COPY --from=publish /app/dotnet/publish .
 ENTRYPOINT ["dotnet", "Discord.Bot.WebUI.dll"]

@@ -1,10 +1,9 @@
 import { useSelector } from 'react-redux';
-import { AuthSlice, AuthStatus, GetAuthenticationStatusAsyncThunk } from '../data/store/AuthSlice';
+import { AuthStatus, GetAuthenticationStatusAsyncThunk } from '../data/store/AuthSlice';
 import { AppDispatch, RootState, Status } from '../data/store/Store';
 import { Login } from './Login';
-import { useEffect } from 'react';
-import { BottomNavigation, BottomNavigationAction, CircularProgress, Container, Typography } from '@mui/material';
-import { NavigationOutlined } from '@mui/icons-material';
+import { useCallback, useEffect } from 'react';
+import { CircularProgress, Container } from '@mui/material';
 
 
 const loading = (status: Status, authStatus: AuthStatus, children: any) => {
