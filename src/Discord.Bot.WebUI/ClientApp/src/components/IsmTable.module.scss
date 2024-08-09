@@ -1,22 +1,6 @@
 @import '../variables.module.scss';
 
 
-.filterTextField {
-    color: whitesmoke;
-
-    div.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-formControl.MuiInputBase-adornedEnd {
-        color: inherit;
-
-        input {
-            color: inherit;
-        }
-    }
-
-    label {
-        color: inherit;
-    }
-}
-
 .ismTable {
     border-radius: 0;
 

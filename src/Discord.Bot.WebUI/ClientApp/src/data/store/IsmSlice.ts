@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import Saying from "../models/Saying";
 import { Status } from "./Store";
 
@@ -24,7 +24,7 @@ const getAllSayingAsync = async (guildId: string) => {
             'Content-Type': 'application-json'
         }
     });
-    return getAllSayingsResponse.data
+    return getAllSayingsResponse.data;
 }
 
 /**
@@ -51,6 +51,7 @@ export const deleteIsmAPICallAsyncThunk = createAsyncThunk(
             }
         })
         const sayings = await getAllSayingAsync(saying.guildId);
+        console.log(sayings[0])
         return sayings;
     }
 );

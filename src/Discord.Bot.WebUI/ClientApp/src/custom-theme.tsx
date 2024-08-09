@@ -1,10 +1,13 @@
 import { colors, createTheme, iconButtonClasses, inputBaseClasses, outlinedInputClasses, typographyClasses } from "@mui/material";
 import styleVariables from './variables.module.scss'
+import { dark } from "@mui/material/styles/createPalette";
 
 const customTheme = createTheme({
     palette: {
+        mode: 'dark',
         primary: colors.yellow,
         background: {
+            default: '#000',
             paper: `${styleVariables.background_dark}`
         },
         text: {
@@ -43,45 +46,7 @@ const customTheme = createTheme({
                 },
             }
         },
-        MuiTableContainer: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: 'unset'
-                }
-            }
-        },
-        MuiTableRow: {
-            styleOverrides: {
-                head: {
-                    backgroundColor: `#101010 !important`,
-                    borderRadius: 'unset',
-                    ['&:hover']: {
-                        backgroundColor: `#101010 !important`,
-                    }
-
-                },
-                root: {
-                    backgroundColor: '#404040',
-                    ['&:nth-of-type(odd)']: {
-                        backgroundColor: '#303030',
-                    },
-                    ['&:hover']: {
-                        backgroundColor: '#202020 !important',
-                    }
-                },
-            },
-        },
-        MuiTableCell: {
-            styleOverrides: {
-                root: {
-                    color: `whitesmoke`,
-                    border: 'unset !important',
-                },
-                head: {
-                    color: `${styleVariables.yellow_dark} !important`,
-                }
-            }
-        },
+       
         MuiFormLabel: {
             styleOverrides: {
                 root: {

@@ -41,14 +41,14 @@ export default function App() {
             <Loading />
                 <AuthGuard>
 
-                    <Container>
+                    <Container maxWidth={false}>
                         <section>
                             <Avatar sx={{ height: `${logoHeight}px`, width: `${logoHeight}px`, m: `${logoMargin}px ${logoMargin}px ${logoMargin}px 0px` }} src='/assets/maniacal.png' />
                             <PillSection />
                             <Button onClick={signout}>Sign Out</Button>
                         </section>
                         <section>
-                            <IsmTable sayings={sayingsState.value} loading={sayingsState.status === 'loading'} />
+                            <IsmTable sayings={sayingsState.value} />
                         </section>
                     </Container>
 

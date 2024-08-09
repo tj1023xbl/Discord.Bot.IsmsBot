@@ -1,71 +1,31 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, TextField, IconButton } from "@mui/material"
-import { styled } from '@mui/material/styles'
-import styleVariables from '../variables.module.scss'
+import { Box, IconButton } from "@mui/material"
+import { DataGrid, GridColDef, GridRowsProp, } from '@mui/x-data-grid'
 import Saying from "../data/models/Saying"
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useSelector } from 'react-redux';
-import styles from './IsmTable.module.scss'
-import moment from 'moment'
-import Adornment from "./Adornment"
 import EditModal from "./edit-modal/EditModal";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import { AddCircleOutline } from "@mui/icons-material";
 import { RootState } from "../data/store/Store";
-
-type Order = 'asc' | 'desc';
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key,
-): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string },
-) => number {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-const StyledFilterInput = styled(TextField, {
-    shouldForwardProp: () => true,
-    label: 'styled-filter-input',
-
-})({
-    '& .focused fieldset': {
-        borderColor: ` ${styleVariables.yellow_dark} !important`
-    },
-    '& .root .outline': {
-        borderColor: 'whitesmoke',
-    },
-    '.outline:hover ': {
-        borderColor: 'gold'
-    },
-    'label.Mui-focused': {
-        color: styleVariables.yellow_dark
-    },
-    '& input': {
-        color: 'whitesmoke'
-    }
-
-})
+import { blue } from "@mui/material/colors"
+import { AddCircleOutline } from "@mui/icons-material";
 
 
-export const IsmTable = ({ sayings, loading }: { sayings: Saying[], loading: boolean }) => {
+export const IsmTable = ({ sayings }: { sayings: Saying[] }) => {
 
-    const [filter, setFilter] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
     const [activeSaying, setActiveSaying] = useState<Saying | null>(null)
     const activeGuildId = useSelector((state: RootState) => state.Guilds.activeGuild?.id)
+
+    
+    const columns: GridColDef[] = [
+        { field: 'id', headerName: 'ID' },
+        { field: 'ismKey', headerName: 'Key' },
+        { field: 'ismSaying', headerName: 'Saying', flex: 1 },
+        { field: 'dateCreated', headerName: 'Date Created',flex: 0.5 },
+        { field: 'ismRecorder', headerName: 'Recorder' },
+    ]
+
 
     const openSayingEditModal = (saying: Saying) => {
         setActiveSaying(saying);
@@ -77,50 +37,21 @@ export const IsmTable = ({ sayings, loading }: { sayings: Saying[], loading: boo
         setModalOpen(false);
     }
 
-    const handleFilter = useCallback((saying: Saying) => {
-        return saying.ismKey.toLowerCase().includes(filter.toLowerCase()) ||
-            saying.ismRecorder.toLowerCase().includes(filter.toLowerCase()) ||
-            saying.ismSaying.toLowerCase().includes(filter.toLowerCase())
-    }, [filter])
-
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
-            {
-                < EditModal
-                    isModalOpen={modalOpen}
-                    saying={activeSaying}
-                    handleClose={handleModalClose}
-                    ismKeyList={new Set(sayings.map(s => s.ismKey))}
-                    recorderList={new Set(sayings.map(s => s.ismRecorder))}
-                    guildId={activeGuildId}
-                />
-            }
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <StyledFilterInput InputProps={{ endAdornment: filter.length > 0 ? <Adornment setFilter={setFilter} /> : null, classes: { root: 'root', focused: 'focused', input: 'imput', notchedOutline: 'outline' } }} className={styles.filterTextField} onChange={(e) => { setFilter(e.target.value) }} value={filter} label='Filter' variant='outlined' />
-                <IconButton onClick={() => setModalOpen(true)}><AddCircleOutline style={{ color: "white" }} /></IconButton>
-            </div>
-            <Table className={styles.ismTable}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Saying</TableCell>
-                        <TableCell>Key</TableCell>
-                        <TableCell>DateTime</TableCell>
-                        <TableCell>Recorder</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {sayings.filter(handleFilter).map((saying) => {
-                        return (
-                            <TableRow key={saying.id} onClick={() => openSayingEditModal(saying)} style={{ cursor: 'pointer' }}>
-                                <TableCell>{saying.ismSaying}</TableCell>
-                                <TableCell>{saying.ismKey}</TableCell>
-                                <TableCell className={styles.date}>{moment(saying.dateCreated).format("MMM Do 'YY")}</TableCell>
-                                <TableCell>{saying.ismRecorder}</TableCell>
-                            </TableRow>
-                        )
-                    })}
-                </TableBody>
-            </Table>
+
+            < EditModal
+                isModalOpen={modalOpen}
+                saying={activeSaying}
+                handleClose={handleModalClose}
+                ismKeyList={new Set(sayings.map(s => s.ismKey))}
+                recorderList={new Set(sayings.map(s => s.ismRecorder))}
+                guildId={activeGuildId}
+            />
+
+            <IconButton onClick={() => setModalOpen(true)}><AddCircleOutline style={{ color: "white" }} /></IconButton>
+            <DataGrid autoHeight rows={sayings} columns={columns} onCellClick={(saying) => openSayingEditModal(saying.row)} />
+
         </LocalizationProvider>
 
     )
