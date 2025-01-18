@@ -33,7 +33,7 @@ namespace Discord.Bot.IsmsBot
             _services = services;
         }
 
-        public async Task InstallCommandsAsync()
+        public void InstallCommands()
         {
             _discordClient.MessageReceived += HandleCommandAsync;
             _discordClient.InteractionCreated += HandleInteractionAsync;

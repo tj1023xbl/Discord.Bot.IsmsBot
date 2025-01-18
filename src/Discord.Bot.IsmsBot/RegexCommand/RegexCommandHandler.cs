@@ -22,17 +22,17 @@ namespace IsmsBot.RegexCommand
         private readonly ILogger _log;
         private ICollection<RegexCommandInstance> _commands;
         private readonly SemaphoreSlim _lock;
-        private CancellationToken _hostCancellationToken;
+        private readonly CancellationToken _hostCancellationToken = new();
 
         public RegexCommandHandler(IServiceProvider serviceProvider, DiscordSocketClient client, CommandOptions commandOptions)
         {
-            this._client = client;
-            this._commandOptions = commandOptions;
-            this._serviceProvider = serviceProvider;
-            this._log = Log.Logger;
-            this._commands = new List<RegexCommandInstance>();
-            this._lock = new SemaphoreSlim(1, 1);
-            this._client.MessageReceived += HandleCommandAsync;
+            _client = client;
+            _commandOptions = commandOptions;
+            _serviceProvider = serviceProvider;
+            _log = Log.Logger;
+            _commands = new List<RegexCommandInstance>();
+            _lock = new SemaphoreSlim(1, 1);
+            _client.MessageReceived += HandleCommandAsync;
         }
 
         public async Task InitializeCommandsAsync()

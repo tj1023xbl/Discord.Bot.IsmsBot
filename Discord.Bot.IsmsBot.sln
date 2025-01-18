@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord.Bot.WebUI", "src\Discord.Bot.WebUI\Discord.Bot.WebUI.csproj", "{6314EAE9-A53A-4B73-87F1-6EA174E3E625}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2039296D-97A7-4033-B9C4-1CF375083769}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord.Bot.Tests", "src\Discord.Bot.Tests\Discord.Bot.Tests.csproj", "{CAA7962C-C593-44CA-9E93-3A172B058B07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,11 +40,18 @@ Global
 		{6314EAE9-A53A-4B73-87F1-6EA174E3E625}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6314EAE9-A53A-4B73-87F1-6EA174E3E625}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6314EAE9-A53A-4B73-87F1-6EA174E3E625}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAA7962C-C593-44CA-9E93-3A172B058B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAA7962C-C593-44CA-9E93-3A172B058B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAA7962C-C593-44CA-9E93-3A172B058B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAA7962C-C593-44CA-9E93-3A172B058B07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40355DC6-C76D-41A2-8847-413821DE1F6E}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CAA7962C-C593-44CA-9E93-3A172B058B07} = {2039296D-97A7-4033-B9C4-1CF375083769}
 	EndGlobalSection
 EndGlobal

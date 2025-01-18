@@ -35,7 +35,7 @@ namespace Discord.Bot.IsmsBot
             _disClient.Log += DiscordLogAsync;
 
             await _disClient.LoginAsync(TokenType.Bot, GetToken());
-            await _handler.InstallCommandsAsync();
+            _handler.InstallCommands();
             await _regexCommandHandler.InitializeCommandsAsync();
 
             await _disClient.StartAsync();
