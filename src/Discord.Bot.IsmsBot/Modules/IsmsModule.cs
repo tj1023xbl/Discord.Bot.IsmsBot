@@ -29,10 +29,10 @@ namespace Discord.Bot.IsmsBot
         [Summary("Adds an ism message")]
         public async Task AddIsmAsync([Remainder][Summary("The ism to create")] string ismText)
         {
-            var user = await _ismsService.AddIsmAsync(ismText, Context);
-            if (user != null)
+            Saying saying = await _ismsService.AddIsmAsync(ismText, Context.User.Username, Context.Guild.Id);
+            if (saying != null)
             {
-                await Context.Channel.SendMessageAsync($"Successfully added new saying for {user.IsmKey}");
+                await Context.Channel.SendMessageAsync($"Successfully added new saying for {saying.IsmKey}");
             }
             else
             {
@@ -41,45 +41,27 @@ namespace Discord.Bot.IsmsBot
         }
 
         [RegexCommand(@"^(?<key>[a-zA-Z]+ism) (?<command>list)$")]
-        public async Task listIsmAsync(Match match)
+        public async Task ListIsmAsync(Match match)
         {
             var ism = match.Groups.GetValueOrDefault("key").Value.ToLower();
-            var sayings = await _ismsService.GetAllIsmsAsync(ism, Context);
-
-            if (sayings != null && sayings.Any())
+            try
             {
-                StringBuilder stringBuilder = new StringBuilder();
-
-                stringBuilder.AppendLine($"Sayings for {ism}:");
-                int count = 0;
-                foreach (Saying saying in sayings)
-                {
-                    count++;
-
-                    string msg = $"{saying.IsmSaying} | added by {saying.IsmRecorder} on {saying.DateCreated}";
-
-                    // Make sure the output is less than 2000 characters
-                    if ((msg.Length + stringBuilder.Length) >= 2000)
-                    {
-                        await Context.Channel.SendMessageAsync(stringBuilder.ToString());
-                        stringBuilder.Clear();
-                    }
-
-                    stringBuilder.AppendLine(msg);
-                }
-
-                await Context.Channel.SendMessageAsync(stringBuilder.ToString());
+                await Context.Channel.SendFileAsync(stream: await _ismsService.GetIsmsTableAsync(ism, Context.Guild.Id), $"{ism}.md");
             }
-            else
+            catch (Exception e)
             {
-                await Context.Channel.SendMessageAsync($"{ism} has no sayings on this server yet.");
+                Log
+                .ForContext("ism", ism)
+                .ForContext("match", match, true)
+                .Error(e, "An error occurred while listing isms");
+                await Context.Channel.SendMessageAsync($"{ism} has no isms on this server yet.");
             }
         }
 
         [Command("random")]
         public async Task GetRandomIsmAsync()
         {
-            Saying saying = await _ismsService.GetRandomSayingAsync(Context.Guild);
+            Saying saying = await _ismsService.GetRandomSayingAsync(Context.Guild.Id);
 
             if (saying == null)
             {

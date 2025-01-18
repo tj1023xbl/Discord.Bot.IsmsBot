@@ -6,11 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.VisualBasic;
-using Discord.Bot.Database.Repositories;
+using System.IO;
+using System.Linq;
+using Discord.Bot.IsmsBot.Helpers;
 
 namespace Discord.Bot.IsmsBot
 {
@@ -45,7 +43,7 @@ namespace Discord.Bot.IsmsBot
         /// <param name="discordContext"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Saying> AddIsmAsync(string commandString, SocketCommandContext discordContext)
+        public async Task<Saying> AddIsmAsync(string commandString, string userName, ulong guildId)
         {
             Log.Verbose("Adding saying for `{0}`", commandString);
             Saying saying = null;
@@ -63,7 +61,7 @@ namespace Discord.Bot.IsmsBot
                 string ismKey = match.Groups["ismKey"].Value.ToLower();
                 string ism = match.Groups["ism"].Value;
 
-                saying = await AddIsmAsync(ismKey, ism, discordContext.Guild.Id, discordContext.User.Username);
+                saying = await AddIsmAsync(ismKey, ism, guildId, userName);
             }
 
             return saying;
@@ -78,7 +76,7 @@ namespace Discord.Bot.IsmsBot
         /// <param name="username"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Saying> AddIsmAsync(string ismKey, string ism, ulong guildId, string username) 
+        public async Task<Saying> AddIsmAsync(string ismKey, string ism, ulong guildId, string username)
         {
             Saying saying = null;
 
@@ -144,10 +142,10 @@ namespace Discord.Bot.IsmsBot
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<Saying> GetRandomSayingAsync(IGuild guild)
+        public async Task<Saying> GetRandomSayingAsync(ulong guildId)
         {
             // Get random saying
-            return await _sayingsRepo.GetRandomIsmAsync(guild.Id);
+            return await _sayingsRepo.GetRandomIsmAsync(guildId);
         }
 
         /// <summary>
@@ -156,9 +154,21 @@ namespace Discord.Bot.IsmsBot
         /// <param name="ismKey"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<List<Saying>> GetAllIsmsAsync(string ismKey, SocketCommandContext context)
+        public async Task<List<Saying>> GetAllIsmsAsync(string ismKey, ulong guildId)
         {
-            return await _sayingsRepo.GetAllIsmsAsync(ismKey, context.Guild.Id);
+            return await _sayingsRepo.GetAllIsmsAsync(ismKey, guildId);
+        }
+
+        public async Task<Stream> GetIsmsTableAsync(string ismKey, ulong guildId)
+        {
+            List<Saying> isms = await _sayingsRepo.GetAllIsmsAsync(ismKey, guildId);
+            if (isms.Count == 0)
+                throw new IndexOutOfRangeException("This user doesn't have any isms yet.");
+
+            AsciiTableGenerator tableGenerator = new(60, 30, 20);
+            MemoryStream stream = await tableGenerator.CreateTableAsync(isms);
+            return stream;
+
         }
 
         /// <summary>
