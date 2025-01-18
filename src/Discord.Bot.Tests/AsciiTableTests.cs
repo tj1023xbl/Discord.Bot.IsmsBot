@@ -8,7 +8,7 @@ namespace Discord.Bot.Tests;
 public class AsciiTableTests : AsciiTableGenerator
 {
 
-    private ILogger _logger;
+    private ILogger? _logger;
 
     public AsciiTableTests() : base(60, 20, 20) { }
 
@@ -97,7 +97,7 @@ public class AsciiTableTests : AsciiTableGenerator
             new Saying()
             {
                 Id = Guid.NewGuid(),
-                DateCreated = DateTime.Now,
+                DateCreated = DateTime.Now - TimeSpan.FromDays(10),
                 GuildId = 0,
                 IsmKey = "testism",
                 IsmRecorder = "Tybird13",
@@ -106,7 +106,7 @@ public class AsciiTableTests : AsciiTableGenerator
             new Saying()
             {
                 Id = Guid.NewGuid(),
-                DateCreated = DateTime.Now,
+                DateCreated = DateTime.Now - TimeSpan.FromDays(20),
                 GuildId = 0,
                 IsmKey = "testism",
                 IsmRecorder = "Swoglordicusthethird",
@@ -115,7 +115,7 @@ public class AsciiTableTests : AsciiTableGenerator
             new Saying()
             {
                 Id = Guid.NewGuid(),
-                DateCreated = DateTime.Now,
+                DateCreated = DateTime.Now - TimeSpan.FromDays(30),
                 GuildId = 0,
                 IsmKey = "testism",
                 IsmRecorder = "his uber highness mr squeaky pants...",

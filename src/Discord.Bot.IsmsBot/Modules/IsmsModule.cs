@@ -80,7 +80,7 @@ namespace Discord.Bot.IsmsBot
             Log.Verbose("Message content = {0}", username);
             if (string.IsNullOrEmpty(username)) return;
 
-            Saying ism = await _ismsService.GetIsmAsync(username, Context.Guild);
+            Saying ism = await _ismsService.GetIsmAsync(username, Context.Guild.Id);
             if (ism == null)
             {
                 string msg = $"{username} is not recognized, or they don't have any isms on this server yet.";

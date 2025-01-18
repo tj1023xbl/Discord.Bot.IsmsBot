@@ -69,10 +69,10 @@ namespace Discord.Bot.IsmsBot
             Saying ism;
             
             if(ismKey == "Random"){
-                ism = await _ismsService.GetRandomSayingAsync(this.Context.Guild);
+                ism = await _ismsService.GetRandomSayingAsync(this.Context.Guild.Id);
             } 
             else{
-                ism = await _ismsService.GetIsmAsync(ismKey, this.Context.Guild);
+                ism = await _ismsService.GetIsmAsync(ismKey, this.Context.Guild.Id);
             }
 
             if (ism != null && ism != default)

@@ -131,10 +131,10 @@ namespace Discord.Bot.IsmsBot
         /// <param name="ismKey"></param>
         /// <param name="discordContext"></param>
         /// <returns></returns>
-        public async Task<Saying> GetIsmAsync(string ismKey, IGuild guild)
+        public async Task<Saying> GetIsmAsync(string ismKey, ulong guildId)
         {
             ismKey = ismKey.ToLower();
-            return await _sayingsRepo.GetRandomIsmAsync(ismKey, guild.Id);
+            return await _sayingsRepo.GetRandomIsmAsync(ismKey, guildId);
         }
 
         /// <summary>
@@ -162,6 +162,7 @@ namespace Discord.Bot.IsmsBot
         public async Task<Stream> GetIsmsTableAsync(string ismKey, ulong guildId)
         {
             List<Saying> isms = await _sayingsRepo.GetAllIsmsAsync(ismKey, guildId);
+            isms.Sort(new SayingComparer());
             if (isms.Count == 0)
                 throw new IndexOutOfRangeException("This user doesn't have any isms yet.");
 
@@ -221,6 +222,14 @@ namespace Discord.Bot.IsmsBot
                                 alexism
                 """;
             return msg;
+        }
+
+        private class SayingComparer : IComparer<Saying>
+        {
+            public int Compare(Saying x, Saying y)
+            {
+                return x.DateCreated >= y.DateCreated ? 1 : -1;
+            }
         }
     }
 }
