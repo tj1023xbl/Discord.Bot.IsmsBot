@@ -133,10 +133,10 @@ namespace Discord.Bot.IsmsBot
         /// <param name="ismKey"></param>
         /// <param name="discordContext"></param>
         /// <returns></returns>
-        public async Task<Saying> GetIsmAsync(string ismKey, SocketCommandContext discordContext)
+        public async Task<Saying> GetIsmAsync(string ismKey, IGuild guild)
         {
             ismKey = ismKey.ToLower();
-            return await _sayingsRepo.GetRandomIsmAsync(ismKey, discordContext.Guild.Id);
+            return await _sayingsRepo.GetRandomIsmAsync(ismKey, guild.Id);
         }
 
         /// <summary>
@@ -144,10 +144,10 @@ namespace Discord.Bot.IsmsBot
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<Saying> GetRandomSayingAsync(SocketCommandContext context)
+        public async Task<Saying> GetRandomSayingAsync(IGuild guild)
         {
             // Get random saying
-            return await _sayingsRepo.GetRandomIsmAsync(context.Guild.Id);
+            return await _sayingsRepo.GetRandomIsmAsync(guild.Id);
         }
 
         /// <summary>
@@ -167,9 +167,9 @@ namespace Discord.Bot.IsmsBot
         /// <param name="context"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<List<string>> GetAllIsmKeysForServerAsync(SocketCommandContext context)
+        public async Task<List<string>> GetAllIsmKeysForServerAsync(IGuild guild)
         {
-            return await _sayingsRepo.GetAllIsmKeysForServerAsync(context.Guild.Id);
+            return await _sayingsRepo.GetAllIsmKeysForServerAsync(guild.Id);
         }
 
         public string GetHelpAsync()

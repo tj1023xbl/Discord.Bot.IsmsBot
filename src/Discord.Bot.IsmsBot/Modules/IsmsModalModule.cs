@@ -1,13 +1,15 @@
 ﻿using Discord.Bot.Database.Models;
 using Discord.Interactions;
 using Serilog;
+using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Discord.Bot.IsmsBot
 {
-    public class IsmsModalModule : InteractionModuleBase<SocketInteractionContext>
+    public partial class IsmsModalModule : InteractionModuleBase<SocketInteractionContext>
     {
+
         private readonly IsmsService _ismsService;
 
         /// <summary>
@@ -18,6 +20,7 @@ namespace Discord.Bot.IsmsBot
             _ismsService = ismsService;
         }
 
+        #region AddIsm
         [SlashCommand("addism", "Adds an ism message")]
         public async Task AddIsmModalAsync()
         {
@@ -29,7 +32,7 @@ namespace Discord.Bot.IsmsBot
             await Context.Interaction.RespondWithModalAsync(mb.Build());
         }
 
-        public class IsmModal : IModal
+        public class AddIsmModal : IModal
         {
             public string Title => "Add an Ism!";
             public string CustomId => "add_ism_modal";
@@ -44,7 +47,7 @@ namespace Discord.Bot.IsmsBot
         }
 
         [ModalInteraction("add_ism_modal")]
-        public async Task ModalResponse(IsmModal ismModal)
+        public async Task ModalResponse(AddIsmModal ismModal)
         {
             Log.Debug("Received modal submission with <{0}, {1}>", ismModal.IsmKey, ismModal.IsmValue);
             if (string.IsNullOrWhiteSpace(ismModal.IsmKey) || string.IsNullOrWhiteSpace(ismModal.IsmValue) || !ismModal.IsmKey.EndsWith("ism", System.StringComparison.OrdinalIgnoreCase))
@@ -57,6 +60,31 @@ namespace Discord.Bot.IsmsBot
             else
                 await RespondAsync(ErrorResponses.AddIsmModalError);
         }
+        #endregion
 
+        #region GetIsm
+        [SlashCommand("ism", "Gets an ism")]
+        public async Task GetIsmAsync([Summary("Ism"), Autocomplete(typeof(GetIsmAutocompleteHandler))] string ismKey)
+        {
+            Saying ism;
+            
+            if(ismKey == "Random"){
+                ism = await _ismsService.GetRandomSayingAsync(this.Context.Guild);
+            } 
+            else{
+                ism = await _ismsService.GetIsmAsync(ismKey, this.Context.Guild);
+            }
+
+            if (ism != null && ism != default)
+            {
+                await RespondAsync(ism.ToString());
+            }
+            else
+            {
+                await RespondAsync($"{ismKey} couldn't be found in the database.");
+            }
+        }
+
+        #endregion
     }
 }

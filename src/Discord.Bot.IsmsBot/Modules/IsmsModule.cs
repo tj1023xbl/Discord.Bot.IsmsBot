@@ -79,7 +79,7 @@ namespace Discord.Bot.IsmsBot
         [Command("random")]
         public async Task GetRandomIsmAsync()
         {
-            Saying saying = await _ismsService.GetRandomSayingAsync(Context);
+            Saying saying = await _ismsService.GetRandomSayingAsync(Context.Guild);
 
             if (saying == null)
             {
@@ -98,7 +98,7 @@ namespace Discord.Bot.IsmsBot
             Log.Verbose("Message content = {0}", username);
             if (string.IsNullOrEmpty(username)) return;
 
-            Saying ism = await _ismsService.GetIsmAsync(username, Context);
+            Saying ism = await _ismsService.GetIsmAsync(username, Context.Guild);
             if (ism == null)
             {
                 string msg = $"{username} is not recognized, or they don't have any isms on this server yet.";
@@ -107,7 +107,7 @@ namespace Discord.Bot.IsmsBot
                 return;
             }
 
-            await Context.Channel.SendMessageAsync($"'_{ism.IsmSaying}_' - {username.Replace("ism", "")}");
+            await Context.Channel.SendMessageAsync(ism.ToString());
 
         }
 
@@ -116,7 +116,7 @@ namespace Discord.Bot.IsmsBot
         {
             try
             {
-                var isms = await _ismsService.GetAllIsmKeysForServerAsync(Context);
+                var isms = await _ismsService.GetAllIsmKeysForServerAsync(Context.Guild);
                 await Context.Message.ReplyAsync("Here is a list of all the isms on this server:\n" + string.Join("\n", isms));
             }
             catch (Exception e)

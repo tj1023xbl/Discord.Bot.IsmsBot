@@ -53,5 +53,10 @@ namespace Discord.Bot.Database.Models
         [ForeignKey(nameof(Guild))]
         public ulong GuildId { get; set; }
 
+        public override string ToString()
+        {
+            return $"'_{this.IsmSaying}_' - {this.IsmKey.Replace("ism", "")}";
+        }
+
     }
 }

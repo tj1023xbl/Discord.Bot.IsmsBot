@@ -58,7 +58,7 @@ namespace Discord.Bot.IsmsBot
                 LogSeverity.Debug => LogEventLevel.Debug,
                 _ => LogEventLevel.Information
             };
-            Log.Write(severity, message.Exception, "[{Source}] {Message}", message.Source, message.Message);
+            Log.Write(severity, message.Exception, "[DISCORD MESSAGE][{Source}] {Message}", message.Source, message.Message);
             await Task.CompletedTask;
         }
 
